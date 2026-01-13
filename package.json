@@ -31,6 +31,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "lodash-es": "^4.17.21",
+    "lucide-react": "^0.562.0",
     "motion": "^12.9.2",
     "next": "16.0.10",
     "ramda": "^0.27.2",
