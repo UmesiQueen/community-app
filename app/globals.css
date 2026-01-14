@@ -19,7 +19,7 @@
 }
 
 body {
-  background: var(--background);
+  background: #343333;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-josefin-sans), Arial, Helvetica, sans-serif;
 }

@@ -91,8 +91,8 @@ const profiles: Profile[] = [
 
 export default function Catalog() {
   return (
-    <div className="bg-[#413f3fc5] min-h-screen p-8 font-sans">
-      <div className="max-w-350 mx-auto">
+    <div className="min-h-dvh px-5 py-8 md:px-8">
+      <div className="container mx-auto">
         <h1 className="text-4xl font-bold text-white mb-2">Profile Catalog</h1>
         <p className="text-white/70 mb-10">Browse our talented professionals</p>
         {/* Profile List  */}
