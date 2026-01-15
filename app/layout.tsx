@@ -1,4 +1,5 @@
 import { Josefin_Sans } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const josefin_sans = Josefin_Sans({
@@ -14,7 +15,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${josefin_sans.variable} antialiased`}>{children}</body>
+      <body className={`${josefin_sans.variable} antialiased`}>
+        <nav className="flex gap-2 justify-end items-center p-5">
+          <Link href="/">Home</Link>
+          <Link href="/catalog">Catalog</Link>
+        </nav>
+        {children}
+      </body>
     </html>
   );
 }
