@@ -21,73 +21,9 @@ interface Title {
   name: string;
 }
 
-const titles: Title[] = [
-  { id: "1", name: "Software Engineer" },
-  { id: "2", name: "Data Scientist" },
-  { id: "3", name: "DevOps Engineer" },
-  { id: "4", name: "Full Stack Developer" },
-  { id: "5", name: "Product Manager" },
-  { id: "6", name: "UI/UX Designer" },
-  { id: "7", name: "Mobile Developer" },
-  { id: "8", name: "Student" },
-];
+const titles: Title[] = [];
 
-const profiles: Profile[] = [
-  {
-    firstName: "Amara",
-    lastName: "Okafor",
-    profileImage: "https://i.pravatar.cc/?img=11",
-    email: "amara.okafor@email.com",
-    phoneNumbers: ["+234 803 456 7890", "+234 706 123 4567"],
-    username: "amara_codes",
-    title: "1",
-  },
-  {
-    firstName: "Chen",
-    lastName: "Wei",
-    profileImage: "https://i.pravatar.cc/?img=12",
-    email: "chen.wei@email.com",
-    phoneNumbers: ["+86 138 0013 8000"],
-    username: "chenwei_data",
-    title: "2",
-  },
-  {
-    firstName: "Maria",
-    lastName: "Rodriguez",
-    profileImage: "https://i.pravatar.cc/?img=9",
-    email: "maria.rodriguez@email.com",
-    phoneNumbers: ["+52 55 1234 5678", "+52 81 9876 5432"],
-    username: "maria_devops",
-    title: "3",
-  },
-  {
-    firstName: "Jamal",
-    lastName: "Thompson",
-    profileImage: "https://i.pravatar.cc/?img=4",
-    email: "jamal.thompson@email.com",
-    phoneNumbers: ["+1 555 234 5678"],
-    username: "jamal_script",
-    title: "8",
-  },
-  {
-    firstName: "Priya",
-    lastName: "Sharma",
-    profileImage: "https://i.pravatar.cc/?img=5",
-    email: "priya.sharma@email.com",
-    phoneNumbers: ["+91 98765 43210"],
-    username: "priya_pm",
-    title: "5",
-  },
-  {
-    firstName: "Fatima",
-    lastName: "Al-Mansoori",
-    profileImage: "https://i.pravatar.cc/?img=10",
-    email: "fatima.almansoori@email.com",
-    phoneNumbers: ["+971 50 123 4567", "+971 52 987 6543"],
-    username: "fatima_designs",
-    title: "6",
-  },
-];
+const profiles: Profile[] = [];
 
 export default function Catalog() {
   return (
