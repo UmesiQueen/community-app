@@ -22,11 +22,13 @@ export const listProfile = query({
     let filteredUsers = users;
     if (args.searchTerm) {
       const searchLower = args.searchTerm.toLowerCase();
-      filteredUsers = users.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchLower) ||
-          user.email.toLowerCase().includes(searchLower),
-      );
+      filteredUsers = users.filter((user) => {
+        const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+        return (
+          fullName.includes(searchLower) ||
+          user.email.toLowerCase().includes(searchLower)
+        );
+      });
     }
 
     // Enrich with role information
