@@ -35,7 +35,7 @@ export default async function Catalog({ searchParams }: PageProps) {
       <div className="container mx-auto">
         <div className="flex flex-col *:w-full lg:flex-row lg:items-center justify-between gap-4 mb-10">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-[clamp(14px,7vw,36px)] font-bold text-white mb-2">
               Profile Catalog
             </h1>
             <p className="text-white/70">Browse our talented professionals</p>
@@ -57,17 +57,14 @@ export default async function Catalog({ searchParams }: PageProps) {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-10">
             {safeProfiles.map((profile, idx) => {
               const title = profile.title;
               const key = `profile-card-${idx}`;
 
               return (
-                <div
-                  key={key}
-                  className="h-100 rounded-[40px] bg-blue-500/20 backdrop-blur-2xl shadow-lg group"
-                >
-                  <div className="h-full overflow-hidden rounded-[40px] shadow-lg text-[#413f3fc5] bg-blue-200 flex flex-col group-hover:-translate-1 transition-transform duration-100 delay-20 ease-in-out">
+                <div key={key} className="h-100 group">
+                  <div className="h-full overflow-hidden rounded-2xl shadow-lg text-[#413f3fc5] bg-blue-200 flex flex-col group-hover:-translate-0.5 group-hover:shadow-lg group-hover:shadow-white/30 transition-transform duration-100 delay-20 ease-in-out">
                     <div className="h-5/12 flex items-center justify-center">
                       <Image
                         src={profile.profileImage || "/file.svg"} // Fallback image if null
@@ -77,8 +74,8 @@ export default async function Catalog({ searchParams }: PageProps) {
                         className="rounded-full bg-zinc-500 h-35 aspect-square object-cover object-center shadow-lg"
                       />
                     </div>
-                    <div className="h-7/12 rounded-t-[50px] bg-slate-50 inset-shadow-sm inset-shadow-blue-300/70 text-[#413f3f] flex flex-col gap-1 items-center p-4">
-                      <p className="text-center font-semibold text-xl leading-none">
+                    <div className="h-7/12 rounded-t-[50px] bg-slate-50 inset-shadow-sm inset-shadow-blue-300/70 text-[#413f3f] flex flex-col gap-1 items-center px-2 py-4 md:px-4">
+                      <p className="text-center font-semibold text-lg leading-none">
                         {profile.firstName} {profile.lastName}
                       </p>
                       <p className="text-center text-sm text-blue-300 font-medium">
@@ -87,7 +84,7 @@ export default async function Catalog({ searchParams }: PageProps) {
                       <div className="text-center bg-blue-200/70 border border-blue-300 py-1 px-3 w-fit rounded-full text-sm font-medium text-blue-900">
                         {title?.name}
                       </div>
-                      <div className="mt-5 w-full pt-4 border-t border-gray-300">
+                      <div className="mt-5 w-full pt-4 border-t border-gray-300 overflow-hidden">
                         <div className="w-fit mx-auto space-y-3">
                           {profile.email && (
                             <div className="flex items-start gap-2">
