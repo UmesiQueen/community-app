@@ -1,8 +1,8 @@
 export interface Profile {
   firstName: string;
   lastName: string;
-  profileImage: string;
-  email: string | null;
+  profileImage: string | null;
+  email: string;
   phoneNumbers: string[];
   username: string;
   title: Title["id"];
@@ -11,4 +11,6 @@ export interface Profile {
 export interface Title {
   id: string;
   name: string;
+  description: string | null;
+  color?: string;
 }

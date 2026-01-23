@@ -2,8 +2,10 @@ import { fetchQuery } from "convex/nextjs";
 import { MailIcon, PhoneIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { RoleFilter } from "~/components/catalog/role-filter";
 import { SearchInput } from "~/components/catalog/search-input";
 import { api } from "~/convex/_generated/api";
+import { useTitle } from "~/hooks/useTitle";
 import { safeArray } from "~/lib/data.helpers";
 import { searchParamsCache } from "./search-params";
 
@@ -17,24 +19,31 @@ type PageProps = {
 };
 
 export default async function Catalog({ searchParams }: PageProps) {
-  const { q } = searchParamsCache.parse(await searchParams);
+  const { q, role } = searchParamsCache.parse(await searchParams);
+  const { titles, getTitleId } = await useTitle();
+
+  const titleId = getTitleId(role);
 
   const profiles = await fetchQuery(api.profiles.listProfile, {
     searchTerm: q || undefined,
+    titleId: titleId || undefined,
   });
   const safeProfiles = safeArray(profiles);
 
   return (
     <div className="min-h-dvh px-5 py-8 md:px-8">
       <div className="container mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+        <div className="flex flex-col *:w-full lg:flex-row lg:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">
               Profile Catalog
             </h1>
             <p className="text-white/70">Browse our talented professionals</p>
           </div>
-          <SearchInput />
+          <div className="flex flex-col lg:flex-row gap-4">
+            <SearchInput />
+            <RoleFilter titles={titles} />
+          </div>
         </div>
 
         {/* Profile List or Empty State */}
