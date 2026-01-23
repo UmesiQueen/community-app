@@ -2,7 +2,7 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "~/convex/_generated/api";
 import { safeArray } from "~/lib/data.helpers";
 
-export async function useTitle() {
+export async function useTitles() {
   const titles = await fetchQuery(api.profiles.listTitle, {});
   const safeTitles = safeArray(titles);
 

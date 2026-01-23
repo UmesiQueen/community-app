@@ -5,7 +5,7 @@ import Image from "next/image";
 import { RoleFilter } from "~/components/catalog/role-filter";
 import { SearchInput } from "~/components/catalog/search-input";
 import { api } from "~/convex/_generated/api";
-import { useTitle } from "~/hooks/useTitle";
+import { useTitles } from "~/hooks/useTitles";
 import { safeArray } from "~/lib/data.helpers";
 import { searchParamsCache } from "./search-params";
 
@@ -20,7 +20,7 @@ type PageProps = {
 
 export default async function Catalog({ searchParams }: PageProps) {
   const { q, role } = searchParamsCache.parse(await searchParams);
-  const { titles, getTitleId } = await useTitle();
+  const { titles, getTitleId } = await useTitles();
 
   const titleId = getTitleId(role);
 
