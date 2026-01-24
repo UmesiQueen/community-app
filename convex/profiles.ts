@@ -45,3 +45,10 @@ export const listProfile = query({
     return enrichedUsers;
   },
 });
+
+export const listTitle = query({
+  args: {},
+  async handler(ctx) {
+    return await ctx.db.query("titles").collect();
+  },
+});
