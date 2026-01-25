@@ -3,7 +3,7 @@ import { api } from "~/convex/_generated/api";
 import { safeArray } from "~/lib/data.helpers";
 
 export async function useTitles() {
-  const titles = await fetchQuery(api.profiles.listTitle, {});
+  const titles = await fetchQuery(api.titles.listTitles, {});
   const safeTitles = safeArray(titles);
 
   const getTitleId = (role: string) => {
