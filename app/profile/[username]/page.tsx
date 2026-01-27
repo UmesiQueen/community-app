@@ -3,15 +3,38 @@ import { Briefcase, Mail, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import ReturnButton from "~/components/profile-card/return-button";
 import { api } from "~/convex/_generated/api";
 import { safeObj } from "~/lib/data.helpers";
 import type { Profile } from "~/types/models";
 
-export const metadata: Metadata = {
-  title: "Profile Card",
-  description: "User profile details",
-};
+// Create a cached version of the profile query
+const getProfileByUsername = cache(async (username: string) => {
+  return await fetchQuery(api.profiles.getProfileByUsername, { username });
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
+  const { username } = await params;
+  const currentProfile = await getProfileByUsername(username);
+  const profile: Profile = safeObj(currentProfile);
+
+  if (Object.keys(profile).length < 1) {
+    return {
+      title: "Profile Not Found",
+      description: "User profile details",
+    };
+  }
+
+  return {
+    title: `${profile.firstName} ${profile.lastName} | Profile`,
+    description: `View the profile of ${profile.firstName} ${profile.lastName}`,
+  };
+}
 
 export default async function ProfileCard({
   params,
@@ -19,10 +42,7 @@ export default async function ProfileCard({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-
-  const currentProfile = await fetchQuery(api.profiles.getProfileByUsername, {
-    username,
-  });
+  const currentProfile = await getProfileByUsername(username);
   const profile: Profile = safeObj(currentProfile);
 
   if (Object.keys(profile).length < 1) notFound();
@@ -31,7 +51,7 @@ export default async function ProfileCard({
     <div className="container mx-auto px-5 py-8 md:px-8">
       <div className="mb-5 flex justify-between items-center gap-5">
         <h1 className="text-white-700 w-fit text-[clamp(14px,7vw,36px)] font-bold">
-          User profile
+          User Profile
         </h1>
         <ReturnButton />
       </div>
@@ -60,7 +80,7 @@ export default async function ProfileCard({
         </div>
 
         {/* Department */}
-        <div className="rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-md hover:bg-white/15 md:p-8">
+        <div className="rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-md md:p-8">
           <h2 className="mb-3 text-sm font-semibold tracking-wider text-white/60 uppercase">
             Department
           </h2>
