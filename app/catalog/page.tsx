@@ -1,7 +1,8 @@
 import { fetchQuery } from "convex/nextjs";
-import { MailIcon, PhoneIcon } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { RoleFilter } from "~/components/catalog/role-filter";
 import { SearchInput } from "~/components/catalog/search-input";
 import { api } from "~/convex/_generated/api";
@@ -31,14 +32,16 @@ export default async function Catalog({ searchParams }: PageProps) {
   const safeProfiles = safeArray(profiles);
 
   return (
-    <div className="min-h-dvh px-5 py-8 md:px-8">
+    <div className="px-5 py-8 md:px-8">
       <div className="container mx-auto">
         <div className="flex flex-col *:w-full lg:flex-row lg:items-center justify-between gap-4 mb-10">
           <div>
-            <h1 className="text-[clamp(14px,7vw,36px)] font-bold text-white mb-2">
+            <h1 className="text-[clamp(14px,7vw,36px)] font-bold text-white mb-2 w-fit">
               Profile Catalog
             </h1>
-            <p className="text-white/70">Browse our talented professionals</p>
+            <p className="text-white/70 w-fit">
+              Browse our talented professionals
+            </p>
           </div>
           <div className="flex flex-col lg:flex-row gap-4">
             <SearchInput />
@@ -63,62 +66,31 @@ export default async function Catalog({ searchParams }: PageProps) {
               const key = `profile-card-${idx}`;
 
               return (
-                <div key={key} className="h-100 group">
-                  <div className="h-full overflow-hidden rounded-2xl shadow-lg text-[#413f3fc5] bg-blue-200 flex flex-col group-hover:-translate-0.5 group-hover:shadow-lg group-hover:shadow-white/30 transition-transform duration-100 delay-20 ease-in-out">
-                    <div className="h-5/12 flex items-center justify-center">
-                      <Image
-                        src={profile.profileImage || "/file.svg"} // Fallback image if null
-                        alt={profile.firstName}
-                        width={150}
-                        height={150}
-                        className="rounded-full bg-zinc-500 h-35 aspect-square object-cover object-center shadow-lg"
-                      />
-                    </div>
-                    <div className="h-7/12 rounded-t-[50px] bg-slate-50 inset-shadow-sm inset-shadow-blue-300/70 text-[#413f3f] flex flex-col gap-1 items-center px-2 py-4 md:px-4">
-                      <p className="text-center font-semibold text-lg leading-none">
-                        {profile.firstName} {profile.lastName}
-                      </p>
-                      <p className="text-center text-sm text-blue-300 font-medium">
-                        @{profile.username}
-                      </p>
-                      <div className="text-center bg-blue-200/70 border border-blue-300 py-1 px-3 w-fit rounded-full text-sm font-medium text-blue-900">
-                        {title?.name}
+                <div key={key} className="group">
+                  <Link href={`/profile/${profile.username}`}>
+                    <div className="h-full flex flex-col overflow-hidden rounded-2xl bg-slate-50/10 text-white shadow-xl transition-all duration-200 ease-in-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-white/10 hover:bg-slate-50/15 border border-white/10 group-hover:border-white/15">
+                      <div className="mx-auto my-2 overflow-hidden rounded-full border border-white/15 group-hover:border-white/20 shadow-lg">
+                        <Image
+                          src={profile.profileImage || "/file.svg"} // Fallback image if null
+                          alt={profile.firstName}
+                          width={120}
+                          height={120}
+                          className="object-cover object-center"
+                        />
                       </div>
-                      <div className="mt-5 w-full pt-4 border-t border-gray-300 overflow-hidden">
-                        <div className="w-fit mx-auto space-y-3">
-                          {profile.email && (
-                            <div className="flex items-start gap-2">
-                              <MailIcon size={18} />
-                              <a
-                                href={`mailto:${profile.email}`}
-                                className="text-sm font-medium"
-                              >
-                                {profile.email}
-                              </a>
-                            </div>
-                          )}
-                          <div className="flex items-start gap-2">
-                            <PhoneIcon size={18} />
-                            <ul className="flex-1">
-                              {profile.phoneNumbers.map(
-                                (phone: string, idx: number) => {
-                                  const key = `phone-${idx}`;
-                                  return (
-                                    <li
-                                      key={key}
-                                      className="text-sm mb-1 last:mb-0"
-                                    >
-                                      <a href={`tel:${phone}`}>{phone}</a>
-                                    </li>
-                                  );
-                                },
-                              )}
-                            </ul>
-                          </div>
+                      <div className="mt-auto flex flex-col items-center gap-1 rounded-t-[50px] bg-white/15 group-hover:bg-white/20 px-2 py-6 md:px-4 transition-colors duration-200">
+                        <p className="w-fit max-w-[80%] truncate text-center text-lg leading-none font-semibold">
+                          {profile.firstName} {profile.lastName}
+                        </p>
+                        <p className="w-fit max-w-[80%] truncate text-center text-sm font-medium text-blue-300">
+                          @{profile.username}
+                        </p>
+                        <div className="w-fit flex gap-1 rounded-full leading-none border border-blue-300 bg-blue-200/70 px-3 pt-1.5 pb-2 text-center items-end text-sm font-medium text-blue-900">
+                          <Briefcase size={18} /> {title?.name}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               );
             })}

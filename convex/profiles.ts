@@ -46,9 +46,26 @@ export const listProfile = query({
   },
 });
 
-export const listTitle = query({
-  args: {},
-  async handler(ctx) {
-    return await ctx.db.query("titles").collect();
+// Query to retrieve user by username
+export const getProfileByUsername = query({
+  args: { username: v.string() },
+  async handler(ctx, args) {
+    const user = await ctx.db
+      .query("profile")
+      .withIndex("by_username", (q) =>
+        q.eq("username", args.username.toLowerCase()),
+      )
+      .unique();
+
+    if (!user) {
+      return null;
+    }
+
+    // Enrich with role information
+    const title = await ctx.db.get(user.title);
+    return {
+      ...user,
+      title: title,
+    };
   },
 });

@@ -5,7 +5,7 @@ export interface Profile {
   email: string;
   phoneNumbers: string[];
   username: string;
-  title: Title["id"];
+  title: Title;
 }
 
 export interface Title {

@@ -15,7 +15,7 @@ const schema = defineSchema({
     phoneNumbers: v.array(v.string()),
     username: v.string(),
     title: v.id("titles"),
-  }),
+  }).index("by_username", ["username"]),
 });
 
 export default schema;
