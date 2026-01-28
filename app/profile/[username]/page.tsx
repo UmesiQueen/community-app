@@ -56,7 +56,11 @@ export default async function ProfileCard({
   const currentProfile = await getProfileByUsername(username);
   const profile: Profile = safeObj(currentProfile);
 
-  if (Object.keys(profile).length < 1) notFound();
+  if (Object.keys(profile).length < 1) {
+    notFound();
+  }
+
+  const profile_links = safeArray(profile.links);
 
   return (
     <div className="container mx-auto px-5 py-8 md:px-8">
@@ -158,13 +162,13 @@ export default async function ProfileCard({
         </div>
 
         {/* Social Links */}
-        {profile.links.length > 0 && (
+        {profile_links.length > 0 && (
           <div>
             <h2 className="mb-5 text-sm font-semibold tracking-wider text-white/60 uppercase">
               Links
             </h2>
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-              {safeArray(profile.links).map((link) => {
+              {profile_links.map((link) => {
                 const Icon = getLinkIcon(link.tag);
                 return (
                   <a
