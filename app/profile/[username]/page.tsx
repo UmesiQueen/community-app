@@ -1,10 +1,11 @@
 import { fetchQuery } from "convex/nextjs";
-import { Briefcase, Mail, Phone } from "lucide-react";
+import { Briefcase, Globe, Link, Mail, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import ReturnButton from "~/components/profile-card/return-button";
+import { GitHub, LinkedIn } from "~/components/icons";
+import ReturnButton from "~/components/profile/return-button";
 import { api } from "~/convex/_generated/api";
 import { safeObj } from "~/lib/data.helpers";
 import type { Profile } from "~/types/models";
@@ -13,6 +14,16 @@ import type { Profile } from "~/types/models";
 const getProfileByUsername = cache(async (username: string) => {
   return await fetchQuery(api.profiles.getProfileByUsername, { username });
 });
+
+// Helper function to get the appropriate icon for each link type
+const getLinkIcon = (tag: string) => {
+  const iconMap = {
+    linkedin: LinkedIn,
+    github: GitHub,
+    portfolio: Globe,
+  };
+  return iconMap[tag.toLowerCase()] || Link;
+};
 
 export async function generateMetadata({
   params,
@@ -145,6 +156,43 @@ export default async function ProfileCard({
             </div>
           </div>
         </div>
+
+        {/* Social Links */}
+        {profile.links.length > 0 && (
+          <div>
+            <h2 className="mb-5 text-sm font-semibold tracking-wider text-white/60 uppercase">
+              Links
+            </h2>
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+              {profile.links.map((link) => {
+                const Icon = getLinkIcon(link.tag);
+                return (
+                  <a
+                    key={link.tag}
+                    href={link.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-md transition-all hover:bg-white/15 md:p-6"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="rounded-xl bg-white/15 p-2 transition-colors group-hover:bg-white/25 md:p-3">
+                        <Icon size={20} className="text-white" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 text-xs tracking-wide text-white/60 uppercase">
+                          {link.title}
+                        </div>
+                        <p className="truncate text-lg font-medium text-white transition-colors group-hover:text-white/80">
+                          {link.value.replace(/^https?:\/\/(www\.)?/, "")}
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
