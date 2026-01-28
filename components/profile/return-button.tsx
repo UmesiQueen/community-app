@@ -7,15 +7,9 @@ export default function ReturnButton() {
   const router = useRouter();
 
   const handleOnClick = () => {
-    const referrer = document.referrer;
-    const currentDomain = window.location.origin;
-
-    // TODO: Improve this logic as `referrer` is mostly empty
-    if (referrer.startsWith(currentDomain)) {
-      router.back();
-    } else {
-      router.push("/catalog");
-    }
+    // TODO: check if the previous route contains `/catalog`
+    // else use `router.push('/catalog')`
+    router.back();
   };
 
   return (

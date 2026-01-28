@@ -6,11 +6,17 @@ export interface Profile {
   phoneNumbers: string[];
   username: string;
   title: Title;
+  links: Link[];
 }
 
 export interface Title {
-  id: string;
   name: string;
   description: string | null;
   color?: string;
+}
+
+interface Link {
+  tag: string; // eg linkedin, github, website
+  value: string; // https://linkedin.com
+  title: string; // LinkedIn
 }

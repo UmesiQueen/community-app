@@ -15,6 +15,13 @@ const schema = defineSchema({
     phoneNumbers: v.array(v.string()),
     username: v.string(),
     title: v.id("titles"),
+    links: v.array(
+      v.object({
+        tag: v.string(),
+        value: v.string(),
+        title: v.string(),
+      }),
+    ),
   }).index("by_username", ["username"]),
 });
 
