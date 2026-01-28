@@ -7,7 +7,7 @@ import { cache } from "react";
 import { GitHub, LinkedIn } from "~/components/icons";
 import ReturnButton from "~/components/profile/return-button";
 import { api } from "~/convex/_generated/api";
-import { safeObj } from "~/lib/data.helpers";
+import { safeArray, safeObj } from "~/lib/data.helpers";
 import type { Profile } from "~/types/models";
 
 // Create a cached version of the profile query
@@ -164,7 +164,7 @@ export default async function ProfileCard({
               Links
             </h2>
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-              {profile.links.map((link) => {
+              {safeArray(profile.links).map((link) => {
                 const Icon = getLinkIcon(link.tag);
                 return (
                   <a
