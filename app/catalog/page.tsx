@@ -6,7 +6,6 @@ import Link from "next/link";
 import { RoleFilter } from "~/components/catalog/role-filter";
 import { SearchInput } from "~/components/catalog/search-input";
 import { api } from "~/convex/_generated/api";
-import { useTitles } from "~/hooks/useTitles";
 import { safeArray } from "~/lib/data.helpers";
 import { searchParamsCache } from "./search-params";
 
@@ -19,9 +18,31 @@ type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export async function getTitles() {
+  const titles = await fetchQuery(api.titles.listTitles, {});
+  const safeTitles = safeArray(titles);
+
+  const getTitleId = (role: string) => {
+    if (role) {
+      const title = safeTitles.find(
+        (title) => title.name.toLowerCase() === role.toLowerCase(),
+      );
+
+      return title?._id;
+    }
+
+    return;
+  };
+
+  return {
+    titles: safeTitles,
+    getTitleId,
+  };
+}
+
 export default async function Catalog({ searchParams }: PageProps) {
   const { q, role } = searchParamsCache.parse(await searchParams);
-  const { titles, getTitleId } = await useTitles();
+  const { titles, getTitleId } = await getTitles();
 
   const titleId = getTitleId(role);
 
