@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input"; // Adjust path as needed
@@ -20,6 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form"; // Adjust path as needed
+import { api } from "~/convex/_generated/api";
 import { useTitles } from "~/hooks/useTitles";
 
 const formSchema = z.object({
@@ -37,17 +39,40 @@ const formSchema = z.object({
 });
 
 export default function Profile() {
-  const { titles } = useTitles();
+  const profile = useQuery(api.profiles.getProfileByUsername, {
+    username: "amara_codes",
+  });
 
+  return (
+    <div>
+      <h1 className="text-4xl font-semibold mb-8">Edit Profile</h1>
+
+      {profile ? (
+        <ProfileForm
+          initialData={{
+            firstname: profile.firstName,
+            lastname: profile.lastName,
+            email: profile.email,
+            phonenumbers: profile.phoneNumbers.join(","),
+            title: profile?.title,
+          }}
+        />
+      ) : (
+        <div className="text-center">Loading...</div>
+      )}
+    </div>
+  );
+}
+
+export function ProfileForm({
+  initialData = {},
+}: {
+  initialData: Partial<z.infer<typeof formSchema>>;
+}) {
+  const { titles } = useTitles();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstname: "",
-      lastname: "",
-      email: "",
-      phonenumbers: "",
-      title: "Mr.",
-    },
+    defaultValues: { ...initialData },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -58,7 +83,7 @@ export default function Profile() {
   return (
     <div className="">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -156,7 +181,7 @@ export default function Profile() {
             )}
           />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Save changes</Button>
         </form>
       </Form>
     </div>
