@@ -1,3 +1,4 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -10,6 +11,7 @@ const link_schema = v.array(
 );
 
 const schema = defineSchema({
+  users: authTables.users,
   titles: defineTable({
     name: v.string(),
     description: v.nullable(v.string()),
