@@ -1,10 +1,13 @@
 "use client";
 
+import { UserButton } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
 import { Home, Menu, Settings, User, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import { api } from "~/convex/_generated/api";
 import { cn } from "~/lib/utils";
 
 const navigation = [
@@ -31,6 +34,7 @@ const classNames = (...classes: (string | false | undefined)[]) =>
 export default function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const profile = useQuery(api.profiles.getProfile);
 
   const SidebarContent = (
     <div className="flex-1 flex h-full flex-col border-r border-white/10">
@@ -59,6 +63,17 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="px-4 min-h-16 flex items-center gap-4 py-4">
+        <UserButton />
+
+        <div className="flex flex-col">
+          <span>
+            {profile?.firstName} {profile?.lastName ?? "--"}
+          </span>
+          <span className="text-sm">{profile?.title ?? "--"}</span>
+        </div>
+      </div>
     </div>
   );
 
