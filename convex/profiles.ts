@@ -69,3 +69,52 @@ export const getProfileByUsername = query({
     };
   },
 });
+
+export const getProfile = query({
+  args: {},
+  async handler(ctx) {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const user = await ctx.db
+      .query("profile")
+      .filter((q) => q.eq(q.field("email"), identity?.email))
+      .unique();
+
+    if (!user) {
+      return null;
+    }
+
+    // Enrich with role information
+    return await ctx.db
+      .get(user.title)
+      .then((title) => {
+        return {
+          ...user,
+          title: title,
+        };
+      })
+      .catch(() => {
+        return { ...user, title: null };
+      });
+  },
+});
+
+export const getForCurrentUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    return await ctx.db
+      .query("profile")
+      .filter((q) => q.eq(q.field("email"), identity.email))
+      .unique();
+  },
+});

@@ -39,9 +39,7 @@ const formSchema = z.object({
 });
 
 export default function Profile() {
-  const profile = useQuery(api.profiles.getProfileByUsername, {
-    username: "amara_codes",
-  });
+  const profile = useQuery(api.profiles.getProfile);
 
   return (
     <div>
