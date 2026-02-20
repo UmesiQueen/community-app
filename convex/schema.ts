@@ -10,6 +10,24 @@ const link_schema = v.array(
   }),
 );
 
+const media_schema = v.object({
+  type: v.union(v.literal("photo"), v.literal("pdf"), v.literal("video")),
+  metadata: v.any(),
+});
+
+const project_schema = v.array(
+  v.object({
+    title: v.string(),
+    timeline: v.object({
+      start: v.number(),
+      end: v.number(),
+    }),
+    description: v.string(),
+    media: v.array(media_schema),
+    link: v.optional(v.array(v.string())),
+  }),
+);
+
 const schema = defineSchema({
   users: authTables.users,
   titles: defineTable({
@@ -27,6 +45,8 @@ const schema = defineSchema({
     username: v.string(),
     title: v.nullable(v.id("titles")),
     links: v.optional(link_schema),
+    shortBio: v.nullable(v.string()), // max 250 characters
+    projects: project_schema,
   }).index("by_username", ["username"]),
 });
 
