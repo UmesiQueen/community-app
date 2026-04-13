@@ -36,6 +36,8 @@ Make sure you have the following installed before you begin:
 
 > This project uses `bun@1.3.5` as its package manager declaration, but npm works fine for local development.
 
+> **Bun required for pre-push hook** — The project uses `bun` in its Husky pre-push hook. Install it via `npm install -g bun` or your push will be blocked. Alternatively use `git push --no-verify` for documentation-only changes.
+
 ---
 
 ## Forking and Cloning
