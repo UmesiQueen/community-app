@@ -22,7 +22,6 @@ Thank you for your interest in contributing! This guide walks you through everyt
   - [Before Submitting a PR](#before-submitting-a-pr)
   - [Pull Request Guidelines](#pull-request-guidelines)
   - [Reward](#reward)
-  - [Known Issues and Tips](#known-issues-and-tips)
 
 ---
 
@@ -272,13 +271,6 @@ Also make sure:
 ## Reward
 
 Every completed task comes with a base reward. Finishing within a set time window before the deadline earns you an additional bonus on top of that reward. 🎉
-
-## Known Issues and Tips
-
-- **`middleware` deprecation warning** — Next.js 16 deprecates the `middleware` file convention in favour of `proxy`. This is a known issue in the codebase and does not break functionality.
-- **`lucia` deprecation** — The project includes `lucia@3.2.2` which is deprecated. A migration is planned. Do not build new features that depend on it.
-- **Two terminals required** — The app will not function correctly without both `npx convex dev` and `npm run dev` running at the same time.
-- **Convex minor update available** — You may see a notice about upgrading Convex from `1.31.7` to a newer version. This is safe to ignore for now unless the PR specifically targets a Convex upgrade.
 
 ---
 
