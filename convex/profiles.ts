@@ -34,10 +34,11 @@ export const listProfile = query({
     // Enrich with role information
     const enrichedUsers = await Promise.all(
       filteredUsers.map(async (user) => {
-        const title = await ctx.db.get(user.title);
+        const title = user.title ? await ctx.db.get(user.title) : "";
+
         return {
           ...user,
-          title: title,
+          title,
         };
       }),
     );
