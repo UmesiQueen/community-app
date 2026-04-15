@@ -45,9 +45,12 @@ const schema = defineSchema({
     username: v.string(),
     title: v.nullable(v.id("titles")),
     links: v.optional(link_schema),
-    shortBio: v.optional(v.string()), // max 250 characters
+    shortBio: v.optional(v.string()),
     projects: v.optional(project_schema),
-  }).index("by_username", ["username"]),
+  })
+    .index("by_username", ["username"])
+    .index("by_userId", ["userId"])
+    .index("by_email", ["email"]),
 });
 
 export default schema;
