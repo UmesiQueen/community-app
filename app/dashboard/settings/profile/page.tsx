@@ -52,7 +52,7 @@ export default function Profile() {
             lastname: profile.lastName,
             email: profile.email,
             phonenumbers: profile.phoneNumbers.join(","),
-            title: profile?.title,
+            title: profile?.title.name,
           }}
         />
       ) : (
@@ -167,7 +167,7 @@ export function ProfileForm({
                   </FormControl>
                   <SelectContent>
                     {titles.map((title) => (
-                      <SelectItem key={title} value={title}>
+                      <SelectItem key={title._id} value={title.name}>
                         {title.name}
                       </SelectItem>
                     ))}

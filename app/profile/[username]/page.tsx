@@ -1,13 +1,14 @@
 import { fetchQuery } from "convex/nextjs";
 import { format } from "date-fns";
 import {
+  BookText,
   Briefcase,
   Calendar,
   ExternalLink,
   FileText,
   Globe,
   ImageIcon,
-  Link,
+  LinkIcon,
   Mail,
   Phone,
   Video,
@@ -16,8 +17,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-
-import { GitHub, LinkedIn } from "~/components/icons";
+import { Behance, Figma, GitHub, LinkedIn } from "~/components/icons";
 import ReturnButton from "~/components/profile/return-button";
 import { api } from "~/convex/_generated/api";
 import { safeArray, safeObj } from "~/lib/data.helpers";
@@ -35,8 +35,11 @@ const getLinkIcon = (tag: string) => {
     linkedin: LinkedIn,
     github: GitHub,
     portfolio: Globe,
+    docs: BookText,
+    figma: Figma,
+    behance: Behance,
   };
-  return iconMap[tag.toLowerCase()] || Link;
+  return iconMap[tag.toLowerCase()] || LinkIcon;
 };
 
 export async function generateMetadata({
@@ -289,14 +292,26 @@ export default async function ProfileCard({
                       <h3 className="text-2xl font-bold text-white tracking-tight">
                         {project.title}
                       </h3>
-                      <div className="flex items-center gap-2.5 rounded-full border border-amber-400/30 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-2 text-sm font-medium text-amber-200/90 shadow-lg">
-                        <Calendar size={16} className="text-amber-300" />
-                        <span>
-                          {format(new Date(project.timeline.start), "MMM yyyy")}
-                          {" - "}
-                          {format(new Date(project.timeline.end), "MMM yyyy")}
-                        </span>
-                      </div>
+                      {(project.timeline.start || project.timeline.end) && (
+                        <div className="flex items-center gap-2.5 rounded-full border border-amber-400/30 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-2 text-sm font-medium text-amber-200/90 shadow-lg">
+                          <Calendar size={16} className="text-amber-300" />
+                          <span>
+                            {project.timeline.start && project.timeline.end
+                              ? `${format(new Date(project.timeline.start), "MMM yyyy")} - ${format(new Date(project.timeline.end), "MMM yyyy")}`
+                              : project.timeline.start
+                                ? format(
+                                    new Date(project.timeline.start),
+                                    "MMM yyyy",
+                                  )
+                                : project.timeline.end
+                                  ? format(
+                                      new Date(project.timeline.end),
+                                      "MMM yyyy",
+                                    )
+                                  : null}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Project Description */}
@@ -368,7 +383,7 @@ export default async function ProfileCard({
                                         />
                                       </div>
                                       <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                        <div className="rounded-2xl bg-linear-to-br from-red-500/20 to-orange-500/20 p-8 transition-all group-hover/media:from-red-500/30 group-hover/media:to-orange-500/30 group-hover/media:scale-110">
+                                        <div className="rounded-2xl bg-linear-to-br from-red-500/20 to-orange-500/20 p-4 transition-all group-hover/media:from-red-500/30 group-hover/media:to-orange-500/30 group-hover/media:scale-110">
                                           <FileText
                                             size={32}
                                             className="text-white"
@@ -421,20 +436,17 @@ export default async function ProfileCard({
                           Project Links
                         </h4>
                         <div className="flex flex-wrap gap-3">
-                          {project.link.map((url, idx) => {
-                            const key = `${index}-${idx}`;
+                          {project.link.map(({ tag, value: url }) => {
+                            const Icon = getLinkIcon(tag);
                             return (
                               <a
-                                key={key}
+                                key={tag}
                                 href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group/link flex items-center gap-2.5 rounded-xl border border-white/20 bg-linear-to-r from-white/15 to-white/10 px-5 py-2.5 text-sm font-semibold text-white/90 transition-all hover:border-white/40 hover:from-white/20 hover:to-white/15 hover:shadow-lg hover:scale-105"
                               >
-                                <ExternalLink
-                                  size={14}
-                                  className="text-white/60 transition-colors group-hover/link:text-white"
-                                />
+                                <Icon size={14} />
                                 <span className="truncate max-w-50">
                                   {url.replace(/^https?:\/\/(www\.)?/, "")}
                                 </span>

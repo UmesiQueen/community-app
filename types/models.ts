@@ -17,26 +17,33 @@ export interface Title {
   color?: string;
 }
 
-interface Link {
+export interface Link {
   tag: string; // eg linkedin, github, website
   value: string; // https://linkedin.com
   title: string; // LinkedIn
 }
 
-interface Project {
+export interface Project {
   title: string;
   timeline: {
-    start: number;
-    end: number;
+    start: number | null;
+    end: number | null;
   };
   description: string;
   media: Media[];
-  link?: string[];
+  link: {
+    tag: "github" | "live" | "figma" | "behance" | "docs" | "other";
+    value: string;
+  }[];
 }
 
-interface Media {
+export interface Media {
   type: "photo" | "pdf" | "video";
-  metadata: Record<string, unknown>;
+  metadata: {
+    url: string;
+    title?: string;
+    thumbnail?: string;
+  };
 }
 
 export interface WorkExperience {

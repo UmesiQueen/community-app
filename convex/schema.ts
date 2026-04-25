@@ -9,21 +9,37 @@ const link_schema = v.array(
   }),
 );
 
-const media_schema = v.object({
+const project_media_schema = v.object({
   type: v.union(v.literal("photo"), v.literal("pdf"), v.literal("video")),
-  metadata: v.any(),
+  metadata: v.object({
+    url: v.string(),
+    title: v.optional(v.string()),
+    thumbnail: v.optional(v.string()),
+  }),
+});
+
+const project_link_schema = v.object({
+  tag: v.union(
+    v.literal("github"),
+    v.literal("live"),
+    v.literal("figma"),
+    v.literal("behance"),
+    v.literal("docs"),
+    v.literal("other"),
+  ),
+  value: v.string(),
 });
 
 const project_schema = v.array(
   v.object({
     title: v.string(),
     timeline: v.object({
-      start: v.number(),
-      end: v.number(),
+      start: v.nullable(v.number()),
+      end: v.nullable(v.number()),
     }),
     description: v.string(),
-    media: v.array(media_schema),
-    link: v.optional(v.array(v.string())),
+    media: v.array(project_media_schema),
+    link: v.array(project_link_schema),
   }),
 );
 
