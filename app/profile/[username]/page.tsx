@@ -1,12 +1,13 @@
 import { format } from "date-fns";
 import {
+  BookText,
   Briefcase,
   Calendar,
   ExternalLink,
   FileText,
   Globe,
   ImageIcon,
-  Link,
+  LinkIcon,
   Mail,
   Phone,
   Video,
@@ -14,8 +15,7 @@ import {
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-
-import { GitHub, LinkedIn } from "~/components/icons";
+import { Behance, Figma, GitHub, LinkedIn } from "~/components/icons";
 import ReturnButton from "~/components/profile/return-button";
 import { ShareButton } from "~/components/profile/share-button";
 import { api } from "~/convex/_generated/api";
@@ -31,8 +31,11 @@ const getLinkIcon = (tag: string) => {
     linkedin: LinkedIn,
     github: GitHub,
     portfolio: Globe,
+    docs: BookText,
+    figma: Figma,
+    behance: Behance,
   };
-  return iconMap[tag.toLowerCase()] || Link;
+  return iconMap[tag.toLowerCase()] || LinkIcon;
 };
 
 export async function generateMetadata({
@@ -354,9 +357,11 @@ function Projects({ projects: _projects }: { projects: Profile["projects"] }) {
                 <div className="flex items-center gap-2.5 rounded-full border border-amber-400/30 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-2 text-sm font-medium text-amber-200/90 shadow-lg">
                   <Calendar size={16} className="text-amber-300" />
                   <span>
-                    {format(new Date(project.timeline.start), "MMM yyyy")}
+                    {project?.timeline?.start &&
+                      format(new Date(project.timeline.start), "MMM yyyy")}
                     {" - "}
-                    {format(new Date(project.timeline.end), "MMM yyyy")}
+                    {project?.timeline?.end &&
+                      format(new Date(project.timeline.end), "MMM yyyy")}
                   </span>
                 </div>
               </div>
@@ -480,7 +485,7 @@ function Projects({ projects: _projects }: { projects: Profile["projects"] }) {
                 </h4>
 
                 <div className="flex flex-wrap gap-3">
-                  {safeArray(project.link).map((url, idx) => {
+                  {safeArray(project.link).map(({ value: url }, idx) => {
                     const key = `${index}-${idx}`;
 
                     return (

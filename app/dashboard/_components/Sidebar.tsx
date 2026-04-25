@@ -1,14 +1,21 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { Home, LogOut, Menu, Settings, User, X } from "lucide-react";
+import {
+  FolderOpenDot,
+  Home,
+  LogOut,
+  Menu,
+  Settings,
+  User,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { api } from "~/convex/_generated/api";
+import { useProfile } from "~/hooks/useProfile";
 import { authClient } from "~/lib/auth-client";
 import { cn } from "~/lib/utils";
 
@@ -17,7 +24,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const profile = useQuery(api.profiles.getProfile);
+  const { profile } = useProfile();
   const { data: session } = authClient.useSession();
 
   const profileHref = profile?.username
@@ -27,6 +34,7 @@ export default function Sidebar() {
   const navigation = [
     { name: "Home", href: "/dashboard/home", icon: Home },
     { name: "Profile", href: profileHref, icon: User },
+    { name: "Projects", href: "/dashboard/projects", icon: FolderOpenDot },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
