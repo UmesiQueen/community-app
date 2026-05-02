@@ -52,7 +52,7 @@ export default function Profile() {
             lastname: profile.lastName,
             email: profile.email,
             phonenumbers: profile.phoneNumbers.join(","),
-            title: profile?.title.name,
+            title: profile?.title?.name,
           }}
         />
       ) : (
