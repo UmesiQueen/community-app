@@ -14,7 +14,13 @@ const project_media_schema = v.object({
   metadata: v.object({
     url: v.string(),
     title: v.optional(v.string()),
-    thumbnail: v.optional(v.string()),
+    filename: v.string(),
+    mimeType: v.string(),
+    size: v.number(),
+    duration: v.optional(v.number()),
+    width: v.optional(v.number()),
+    height: v.optional(v.number()),
+    storageId: v.optional(v.string()),
   }),
 });
 
@@ -30,13 +36,22 @@ const project_link_schema = v.object({
   value: v.string(),
 });
 
-const project_schema = v.array(
+export const project_schema = v.array(
   v.object({
     title: v.string(),
     timeline: v.object({
-      start: v.nullable(v.number()),
-      end: v.nullable(v.number()),
+      start: v.union(
+        v.null(),
+        v.object({ year: v.string() }),
+        v.object({ month: v.string(), year: v.string() }),
+      ),
+      end: v.union(
+        v.null(),
+        v.object({ year: v.string() }),
+        v.object({ month: v.string(), year: v.string() }),
+      ),
     }),
+    ongoing: v.boolean(),
     description: v.string(),
     media: v.array(project_media_schema),
     link: v.array(project_link_schema),

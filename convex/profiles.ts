@@ -2,6 +2,7 @@ import { queryGeneric as query } from "convex/server";
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
 import { authComponent } from "./auth";
+import { project_schema } from "./schema";
 
 export const listProfile = query({
   args: {
@@ -182,5 +183,26 @@ export const updateProfile = mutation({
     });
 
     return profile._id;
+  },
+});
+
+export const updateProject = mutation({
+  args: {
+    projects: project_schema,
+  },
+  handler: async (ctx, args) => {
+    const authUser = await authComponent.getAuthUser(ctx);
+    if (!authUser) throw new Error("Not authenticated");
+
+    const profile = await ctx.db
+      .query("profile")
+      .withIndex("by_email", (q) => q.eq("email", authUser.email)) //TODO: replace with index by_userId, userId should be required in schema.
+      .unique();
+
+    if (!profile) throw new Error("Profile not found");
+
+    await ctx.db.patch(profile._id, {
+      projects: args.projects,
+    });
   },
 });
