@@ -1,5 +1,4 @@
 "use client";
-import { format } from "date-fns";
 import {
   BookText,
   Calendar,
@@ -20,7 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import type { Project } from "~/types/models";
+import type { Project, TimelineDate } from "~/types/models";
 
 const getLinkIcon = (tag: string) => {
   const iconMap = {
@@ -34,24 +33,32 @@ const getLinkIcon = (tag: string) => {
   return iconMap[tag.toLowerCase()] || LinkIcon;
 };
 
+const formatTimeline = (project: Project) => {
+  const fmt = (d: TimelineDate) =>
+    !d ? null : "month" in d ? `${d.month.slice(0, 3)} ${d.year}` : d.year;
+
+  const start = fmt(project.timeline.start);
+  const end = fmt(project.timeline.end);
+
+  if (start && end) return `${start} - ${end}`;
+  if (start && project.ongoing) return `${start} - Present`;
+  if (project.ongoing) return "Present";
+  if (start) return start;
+  if (end) return end;
+  return null;
+};
+
 export function ProjectCard(project: Project) {
+  const timeline = formatTimeline(project);
   return (
     <Card className="group rounded-3xl bg-blue-500/20 text-blue-300 border border-white/10">
       <CardHeader>
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <CardTitle className="text-2xl text-white">{project.title}</CardTitle>
-          {(project.timeline.start || project.timeline.end) && (
+          {timeline && (
             <div className="flex items-center gap-2.5 rounded-full border border-amber-400/30 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-2 text-sm font-medium text-amber-200/90 shadow-lg">
               <Calendar size={16} className="text-amber-300" />
-              <span>
-                {project.timeline.start && project.timeline.end
-                  ? `${format(new Date(project.timeline.start), "MMM yyyy")} - ${format(new Date(project.timeline.end), "MMM yyyy")}`
-                  : project.timeline.start
-                    ? format(new Date(project.timeline.start), "MMM yyyy")
-                    : project.timeline.end
-                      ? format(new Date(project.timeline.end), "MMM yyyy")
-                      : null}
-              </span>
+              <span>{timeline}</span>
             </div>
           )}
         </div>
@@ -64,7 +71,7 @@ export function ProjectCard(project: Project) {
       <CardContent>
         {/* Project Media with Preview */}
         {project.media.length > 0 && (
-          <div className="mb-7">
+          <div>
             <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-white/60 uppercase">
               <div className="h-0.5 w-6 rounded-full bg-white/40" />
               Media Gallery
@@ -84,7 +91,7 @@ export function ProjectCard(project: Project) {
                     <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-slate-700/50 to-slate-800/50">
                       {item.type === "photo" && item.metadata?.url ? (
                         <Image
-                          src={item.metadata.url as string}
+                          src={item.metadata.url}
                           alt={`${project.title} photo`}
                           fill
                           className="object-cover brightness-90 transition-transform duration-300 group-hover/media:scale-110"
@@ -94,14 +101,8 @@ export function ProjectCard(project: Project) {
                           <video
                             className="h-full w-full object-cover transition-transform duration-300 group-hover/media:scale-110"
                             muted
-                            poster={
-                              (item.metadata?.thumbnail as string) || undefined
-                            }
                           >
-                            <source
-                              src={item.metadata.url as string}
-                              type="video/mp4"
-                            />
+                            <source src={item.metadata.url} type="video/mp4" />
                           </video>
                           <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                             <div className="rounded-full bg-white/20 p-4 transition-all duration-300 ease-in-out group-hover/media:bg-white/30 group-hover/media:scale-110">
@@ -144,10 +145,12 @@ export function ProjectCard(project: Project) {
                     <div className="p-4">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-sm font-semibold capitalize text-white/80 group-hover/media:text-white transition-colors">
-                          {(item.metadata?.title as string) ??
-                            `Untitled ${item.type === "pdf" ? "Document" : item.type}`}
+                          {item.metadata?.title &&
+                          item.metadata?.title.length > 0
+                            ? item.metadata?.title
+                            : `Untitled ${item.type === "pdf" ? "Document" : item.type}`}
                         </p>
-                        {(item.metadata?.url as string) && (
+                        {item.metadata?.url && (
                           <div className="flex items-center gap-1.5 text-xs text-blue-300/80 group-hover/media:text-blue-300 transition-colors font-medium">
                             <span>View</span>
                             <ExternalLink size={12} />
@@ -164,7 +167,7 @@ export function ProjectCard(project: Project) {
 
         {/* Project Links */}
         {project.link && project.link.length > 0 && (
-          <div>
+          <div className="mt-7">
             <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-white/60 uppercase">
               <div className="h-0.5 w-6 rounded-full bg-white/40" />
               Project Links

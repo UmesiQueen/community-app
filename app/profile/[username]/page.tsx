@@ -1,5 +1,4 @@
 import { fetchQuery } from "convex/nextjs";
-import { format } from "date-fns";
 import {
   BookText,
   Briefcase,
@@ -21,7 +20,7 @@ import { Behance, Figma, GitHub, LinkedIn } from "~/components/icons";
 import ReturnButton from "~/components/profile/return-button";
 import { api } from "~/convex/_generated/api";
 import { safeArray, safeObj } from "~/lib/data.helpers";
-import type { Profile } from "~/types/models";
+import type { Profile, Project, TimelineDate } from "~/types/models";
 import { WorkExperienceSection } from "./_components/WorkExperience";
 
 // Create a cached version of the profile query
@@ -29,7 +28,6 @@ const getProfileByUsername = cache(async (username: string) => {
   return await fetchQuery(api.profiles.getProfileByUsername, { username });
 });
 
-// Helper function to get the appropriate icon for each link type
 const getLinkIcon = (tag: string) => {
   const iconMap = {
     linkedin: LinkedIn,
@@ -40,6 +38,20 @@ const getLinkIcon = (tag: string) => {
     behance: Behance,
   };
   return iconMap[tag.toLowerCase()] || LinkIcon;
+};
+
+const formatTimeline = (project: Project) => {
+  const fmt = (d: TimelineDate) =>
+    !d ? null : "month" in d ? `${d.month.slice(0, 3)} ${d.year}` : d.year;
+
+  const start = fmt(project.timeline.start);
+  const end = fmt(project.timeline.end);
+
+  if (start && end) return `${start} - ${end}`;
+  if (start && project.ongoing) return `${start} - Present`;
+  if (start) return start;
+  if (end) return end;
+  return null;
 };
 
 export async function generateMetadata({
@@ -113,12 +125,11 @@ export default async function ProfileCard({
   const { username } = await params;
   const currentProfile = await getProfileByUsername(username);
   const profile: Profile = safeObj(currentProfile);
+  const profile_links = safeArray(profile.links);
 
   if (Object.keys(profile).length < 1) {
     notFound();
   }
-
-  const profile_links = safeArray(profile.links);
 
   return (
     <div className="container mx-auto px-5 py-8 md:px-8">
@@ -282,6 +293,8 @@ export default async function ProfileCard({
             <div className="space-y-6">
               {profile.projects.map((project, index) => {
                 const key = `${project.title}-${index}`;
+                const project_timeline = formatTimeline(project);
+
                 return (
                   <div
                     key={key}
@@ -292,24 +305,12 @@ export default async function ProfileCard({
                       <h3 className="text-2xl font-bold text-white tracking-tight">
                         {project.title}
                       </h3>
-                      {(project.timeline.start || project.timeline.end) && (
+
+                      {/* Project timeline */}
+                      {project_timeline && (
                         <div className="flex items-center gap-2.5 rounded-full border border-amber-400/30 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-2 text-sm font-medium text-amber-200/90 shadow-lg">
                           <Calendar size={16} className="text-amber-300" />
-                          <span>
-                            {project.timeline.start && project.timeline.end
-                              ? `${format(new Date(project.timeline.start), "MMM yyyy")} - ${format(new Date(project.timeline.end), "MMM yyyy")}`
-                              : project.timeline.start
-                                ? format(
-                                    new Date(project.timeline.start),
-                                    "MMM yyyy",
-                                  )
-                                : project.timeline.end
-                                  ? format(
-                                      new Date(project.timeline.end),
-                                      "MMM yyyy",
-                                    )
-                                  : null}
-                          </span>
+                          <span>{project_timeline}</span>
                         </div>
                       )}
                     </div>
@@ -332,7 +333,7 @@ export default async function ProfileCard({
                             return (
                               <a
                                 key={key}
-                                href={(item.metadata?.url as string) || "#"}
+                                href={item.metadata?.url || "#"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group/media relative overflow-hidden rounded-2xl border border-white/15 bg-linear-to-br from-white/10 to-white/5 transition-all hover:border-white/30 hover:shadow-xl hover:scale-105"
@@ -342,7 +343,7 @@ export default async function ProfileCard({
                                   {item.type === "photo" &&
                                   item.metadata?.url ? (
                                     <Image
-                                      src={item.metadata.url as string}
+                                      src={item.metadata.url}
                                       alt={`${project.title} photo`}
                                       fill
                                       className="object-cover transition-transform duration-300 group-hover/media:scale-110"
@@ -353,13 +354,9 @@ export default async function ProfileCard({
                                       <video
                                         className="h-full w-full object-cover"
                                         muted
-                                        poster={
-                                          (item.metadata
-                                            ?.thumbnail as string) || undefined
-                                        }
                                       >
                                         <source
-                                          src={item.metadata.url as string}
+                                          src={item.metadata.url}
                                           type="video/mp4"
                                         />
                                       </video>
@@ -410,10 +407,10 @@ export default async function ProfileCard({
                                 <div className="p-4">
                                   <div className="flex items-center justify-between gap-2">
                                     <p className="text-sm font-semibold capitalize text-white/95">
-                                      {(item.metadata?.title as string) ??
+                                      {item.metadata?.title ??
                                         `Untitled ${item.type === "pdf" ? "Document" : item.type}`}
                                     </p>
-                                    {(item.metadata?.url as string) && (
+                                    {item.metadata?.url && (
                                       <div className="flex items-center gap-1.5 text-xs text-blue-300/80 group-hover/media:text-blue-300 transition-colors font-medium">
                                         <span>View</span>
                                         <ExternalLink size={12} />
