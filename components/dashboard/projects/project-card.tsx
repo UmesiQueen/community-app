@@ -3,7 +3,6 @@ import {
   BookText,
   Calendar,
   ExternalLink,
-  FileQuestionMark,
   FileText,
   Globe,
   LinkIcon,
@@ -126,29 +125,20 @@ export function ProjectCard(project: Project) {
                             </div>
                           </div>
                         </div>
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center">
-                          <div className="rounded-full bg-white/20 p-4 transition-all duration-300 ease-in-out group-hover/media:bg-white/30 group-hover/media:scale-110">
-                            <FileQuestionMark
-                              size={32}
-                              className="text-white"
-                            />
-                          </div>
-                        </div>
-                      )}
+                      ) : null}
+
                       {/* Type Badge */}
                       <div className="absolute top-3 right-3 rounded-lg border border-white/20 bg-black/50 px-3 py-1.5 text-xs font-semibold uppercase text-white">
                         {item.type}
                       </div>
                     </div>
+
                     {/* Media Info */}
                     <div className="p-4">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-sm font-semibold capitalize text-white/80 group-hover/media:text-white transition-colors">
-                          {item.metadata?.title &&
-                          item.metadata?.title.length > 0
-                            ? item.metadata?.title
-                            : `Untitled ${item.type === "pdf" ? "Document" : item.type}`}
+                          {item.metadata?.title ??
+                            `Untitled ${item.type === "pdf" ? "Document" : item.type}`}
                         </p>
                         {item.metadata?.url && (
                           <div className="flex items-center gap-1.5 text-xs text-blue-300/80 group-hover/media:text-blue-300 transition-colors font-medium">

@@ -6,7 +6,6 @@ import {
   ExternalLink,
   FileText,
   Globe,
-  ImageIcon,
   LinkIcon,
   Mail,
   Phone,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { Behance, Figma, GitHub, LinkedIn } from "~/components/icons";
@@ -167,7 +167,7 @@ export default async function ProfileCard({
 
         {/* Short Bio */}
         {profile.shortBio && (
-          <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl md:p-8">
+          <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-8">
             <div className="flex items-center gap-2 mb-4">
               <div className="h-1 w-8 rounded-full bg-linear-to-r from-purple-400 to-pink-400"></div>
               <h2 className="text-xs font-bold tracking-widest text-white/70 uppercase">
@@ -190,10 +190,10 @@ export default async function ProfileCard({
           </div>
           <div className="flex flex-col gap-5 *:w-full lg:flex-row">
             {/* Email */}
-            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl hover:scale-[1.02] md:p-7">
+            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 flex-1 items-start gap-4">
-                  <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-3 transition-all group-hover:from-emerald-500/30 group-hover:to-teal-500/30 group-hover:scale-110 md:p-3.5 shadow-lg">
+                  <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-3 transition-colors duration-300 ease-in-out group-hover:from-emerald-500/30 group-hover:to-teal-500/30 md:p-3.5 shadow-lg">
                     <Mail size={22} className="text-emerald-300" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -202,7 +202,7 @@ export default async function ProfileCard({
                     </div>
                     <a
                       href={`mailto:${profile.email}`}
-                      className="text-lg font-medium break-all text-white/95 transition-colors hover:text-emerald-300"
+                      className="text-lg font-medium break-all text-white/95 transition-colors duration-300 ease-in-out hover:text-emerald-300"
                     >
                       {profile.email}
                     </a>
@@ -212,10 +212,10 @@ export default async function ProfileCard({
             </div>
 
             {/* Phone */}
-            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl hover:scale-[1.02] md:p-7">
+            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-1 items-start gap-4">
-                  <div className="rounded-2xl bg-linear-to-br from-blue-500/20 to-indigo-500/20 p-3 transition-all group-hover:from-blue-500/30 group-hover:to-indigo-500/30 group-hover:scale-110 md:p-3.5 shadow-lg">
+                  <div className="rounded-2xl bg-linear-to-br from-blue-500/20 to-indigo-500/20 p-3 transition-colors duration-300 ease-in-out group-hover:from-blue-500/30 group-hover:to-indigo-500/30 md:p-3.5 shadow-lg">
                     <Phone size={22} className="text-blue-300" />
                   </div>
                   <div className="flex-1">
@@ -227,7 +227,7 @@ export default async function ProfileCard({
                         <p key={phone} className="w-fit">
                           <a
                             href={`tel:${phone}`}
-                            className="block text-lg font-medium text-white/95 transition-colors hover:text-blue-300"
+                            className="block text-lg font-medium text-white/95 transition-colors duration-300 ease-in-out hover:text-blue-300"
                           >
                             {phone}
                           </a>
@@ -259,10 +259,10 @@ export default async function ProfileCard({
                     href={link.value}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl hover:scale-[1.02] md:p-7"
+                    className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-7"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="rounded-2xl bg-linear-to-br from-violet-500/20 to-fuchsia-500/20 p-3 transition-all group-hover:from-violet-500/30 group-hover:to-fuchsia-500/30 group-hover:scale-110 shadow-lg">
+                      <div className="rounded-2xl bg-linear-to-br from-violet-500/20 to-fuchsia-500/20 p-3 transition-colors duration-300 ease-in-out group-hover:from-violet-500/30 group-hover:to-fuchsia-500/30 shadow-lg">
                         <Icon size={22} className="text-violet-300" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -331,12 +331,12 @@ export default async function ProfileCard({
                           {project.media.map((item, idx) => {
                             const key = `${project.title}-media-${idx}`;
                             return (
-                              <a
+                              <Link
                                 key={key}
                                 href={item.metadata?.url || "#"}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group/media relative overflow-hidden rounded-2xl border border-white/15 bg-linear-to-br from-white/10 to-white/5 transition-all hover:border-white/30 hover:shadow-xl hover:scale-105"
+                                className="group/media relative overflow-hidden rounded-2xl border border-white/15 bg-linear-to-br from-white/10 to-white/5 transition-colors duration-300 ease-in-out hover:border-white/40 hover:shadow-lg hover:from-white/13 hover:to-white/7"
                               >
                                 {/* Media Preview */}
                                 <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-slate-700/50 to-slate-800/50">
@@ -352,7 +352,7 @@ export default async function ProfileCard({
                                     item.metadata?.url ? (
                                     <div className="relative h-full w-full">
                                       <video
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-cover transition-transform duration-300 group-hover/media:scale-110"
                                         muted
                                       >
                                         <source
@@ -376,11 +376,11 @@ export default async function ProfileCard({
                                         <embed
                                           src={`${item.metadata?.url}#toolbar=0&navpanes=0&scrollbar=0`}
                                           type="application/pdf"
-                                          className="w-[calc(100%+20px)] h-full border-none scale-110"
+                                          className="w-[calc(100%+20px)] h-full border-none scale-110 transition-transform duration-300 group-hover/media:scale-120"
                                         />
                                       </div>
                                       <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                                        <div className="rounded-2xl bg-linear-to-br from-red-500/20 to-orange-500/20 p-4 transition-all group-hover/media:from-red-500/30 group-hover/media:to-orange-500/30 group-hover/media:scale-110">
+                                        <div className="rounded-2xl bg-linear-to-br from-red-500/20 to-orange-500/20 p-4 transition-all duration-300 ease-in-out group-hover/media:from-red-500/30 group-hover/media:to-orange-500/30 group-hover/media:scale-110">
                                           <FileText
                                             size={32}
                                             className="text-white"
@@ -388,14 +388,7 @@ export default async function ProfileCard({
                                         </div>
                                       </div>
                                     </div>
-                                  ) : (
-                                    <div className="flex h-full w-full items-center justify-center">
-                                      <ImageIcon
-                                        size={48}
-                                        className="text-white/40"
-                                      />
-                                    </div>
-                                  )}
+                                  ) : null}
 
                                   {/* Type Badge */}
                                   <div className="absolute top-3 right-3 rounded-lg border border-white/20 bg-black/50 px-3 py-1.5 text-xs font-semibold uppercase text-white">
@@ -418,7 +411,7 @@ export default async function ProfileCard({
                                     )}
                                   </div>
                                 </div>
-                              </a>
+                              </Link>
                             );
                           })}
                         </div>
@@ -436,18 +429,18 @@ export default async function ProfileCard({
                           {project.link.map(({ tag, value: url }) => {
                             const Icon = getLinkIcon(tag);
                             return (
-                              <a
+                              <Link
                                 key={tag}
                                 href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group/link flex items-center gap-2.5 rounded-xl border border-white/20 bg-linear-to-r from-white/15 to-white/10 px-5 py-2.5 text-sm font-semibold text-white/90 transition-all hover:border-white/40 hover:from-white/20 hover:to-white/15 hover:shadow-lg hover:scale-105"
+                                className="group/link flex items-center gap-2.5 rounded-xl border border-white/20 bg-linear-to-r from-white/10 to-white/5 px-5 py-2.5 text-sm font-semibold text-white/90 transition-all duration-300 ease-in-out hover:border-white/40 hover:from-white/13 hover:to-white/7 hover:text-blue-200 hover:shadow-lg"
                               >
                                 <Icon size={14} />
                                 <span className="truncate max-w-50">
                                   {url.replace(/^https?:\/\/(www\.)?/, "")}
                                 </span>
-                              </a>
+                              </Link>
                             );
                           })}
                         </div>
