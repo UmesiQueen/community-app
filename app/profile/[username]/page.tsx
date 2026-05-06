@@ -5,7 +5,6 @@ import {
   ExternalLink,
   FileText,
   Globe,
-  ImageIcon,
   LinkIcon,
   Mail,
   Phone,
@@ -176,7 +175,7 @@ export default async function ProfileCard({
 
         {/* Short Bio */}
         {profile.shortBio && (
-          <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl md:p-8">
+          <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-8">
             <div className="flex items-center gap-2 mb-4">
               <div className="h-1 w-8 rounded-full bg-linear-to-r from-purple-400 to-pink-400"></div>
               <h2 className="text-xs font-bold tracking-widest text-white/70 uppercase">
@@ -199,10 +198,10 @@ export default async function ProfileCard({
           </div>
           <div className="flex flex-col gap-5 *:w-full lg:flex-row">
             {/* Email */}
-            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl hover:scale-[1.02] md:p-7">
+            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 flex-1 items-start gap-4">
-                  <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-3 transition-all group-hover:from-emerald-500/30 group-hover:to-teal-500/30 group-hover:scale-110 md:p-3.5 shadow-lg">
+                  <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-3 transition-colors duration-300 ease-in-out group-hover:from-emerald-500/30 group-hover:to-teal-500/30 md:p-3.5 shadow-lg">
                     <Mail size={22} className="text-emerald-300" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -211,7 +210,7 @@ export default async function ProfileCard({
                     </div>
                     <a
                       href={`mailto:${profile.email}`}
-                      className="text-lg font-medium break-all text-white/95 transition-colors hover:text-emerald-300"
+                      className="text-lg font-medium break-all text-white/95 transition-colors duration-300 ease-in-out hover:text-emerald-300"
                     >
                       {profile.email}
                     </a>
@@ -221,10 +220,10 @@ export default async function ProfileCard({
             </div>
 
             {/* Phone */}
-            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl hover:scale-[1.02] md:p-7">
+            <div className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-1 items-start gap-4">
-                  <div className="rounded-2xl bg-linear-to-br from-blue-500/20 to-indigo-500/20 p-3 transition-all group-hover:from-blue-500/30 group-hover:to-indigo-500/30 group-hover:scale-110 md:p-3.5 shadow-lg">
+                  <div className="rounded-2xl bg-linear-to-br from-blue-500/20 to-indigo-500/20 p-3 transition-colors duration-300 ease-in-out group-hover:from-blue-500/30 group-hover:to-indigo-500/30 md:p-3.5 shadow-lg">
                     <Phone size={22} className="text-blue-300" />
                   </div>
                   <div className="flex-1">
@@ -236,7 +235,7 @@ export default async function ProfileCard({
                         <p key={phone} className="w-fit">
                           <a
                             href={`tel:${phone}`}
-                            className="block text-lg font-medium text-white/95 transition-colors hover:text-blue-300"
+                            className="block text-lg font-medium text-white/95 transition-colors duration-300 ease-in-out hover:text-blue-300"
                           >
                             {phone}
                           </a>
@@ -268,10 +267,10 @@ export default async function ProfileCard({
                     href={link.value}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all hover:border-white/30 hover:shadow-xl hover:scale-[1.02] md:p-7"
+                    className="group rounded-3xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 p-6 transition-all duration-300 ease-in-out hover:border-white/30 hover:shadow-lg md:p-7"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="rounded-2xl bg-linear-to-br from-violet-500/20 to-fuchsia-500/20 p-3 transition-all group-hover:from-violet-500/30 group-hover:to-fuchsia-500/30 group-hover:scale-110 shadow-lg">
+                      <div className="rounded-2xl bg-linear-to-br from-violet-500/20 to-fuchsia-500/20 p-3 transition-colors duration-300 ease-in-out group-hover:from-violet-500/30 group-hover:to-fuchsia-500/30 shadow-lg">
                         <Icon size={22} className="text-violet-300" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -302,7 +301,7 @@ export default async function ProfileCard({
               {profile.interests.map((interest) => (
                 <div
                   key={interest}
-                  className="group rounded-2xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 px-5 py-3 transition-all hover:border-white/30 hover:shadow-lg hover:scale-105"
+                  className="group rounded-2xl border border-white/20 bg-linear-to-br from-white/15 to-white/5 px-5 py-3 transition-all hover:border-white/30 hover:shadow-lg"
                 >
                   <span className="text-base font-semibold text-white/95 group-hover:text-pink-300 transition-colors">
                     {interest}
@@ -397,7 +396,7 @@ function Projects({ projects: _projects }: { projects: Profile["projects"] }) {
                           href={item.metadata?.url || "#"}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group/media relative overflow-hidden rounded-2xl border border-white/15 bg-linear-to-br from-white/10 to-white/5 transition-all hover:border-white/30 hover:shadow-xl hover:scale-105"
+                          className="group/media relative overflow-hidden rounded-2xl border border-white/15 bg-linear-to-br from-white/10 to-white/5 transition-all hover:border-white/30 hover:shadow-lg"
                         >
                           {/* Media Preview */}
                           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-slate-700/50 to-slate-800/50">
@@ -444,14 +443,7 @@ function Projects({ projects: _projects }: { projects: Profile["projects"] }) {
                                   </div>
                                 </div>
                               </div>
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center">
-                                <ImageIcon
-                                  size={48}
-                                  className="text-white/40"
-                                />
-                              </div>
-                            )}
+                            ) : null}
 
                             {/* Type Badge */}
                             <div className="absolute top-3 right-3 rounded-lg border border-white/20 bg-black/50 px-3 py-1.5 text-xs font-semibold uppercase text-white">
@@ -482,36 +474,38 @@ function Projects({ projects: _projects }: { projects: Profile["projects"] }) {
               )}
 
               {/* Project Links */}
-              <div>
-                <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-white/60 uppercase">
-                  <div className="h-0.5 w-6 rounded-full bg-white/40"></div>
-                  Project Links
-                </h4>
+              {safeArray(project.link).length > 0 && (
+                <div>
+                  <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-white/60 uppercase">
+                    <div className="h-0.5 w-6 rounded-full bg-white/40"></div>
+                    Project Links
+                  </h4>
 
-                <div className="flex flex-wrap gap-3">
-                  {safeArray(project.link).map(({ value: url }, idx) => {
-                    const key = `${index}-${idx}`;
+                  <div className="flex flex-wrap gap-3">
+                    {safeArray(project.link).map(({ value: url }, idx) => {
+                      const key = `${index}-${idx}`;
 
-                    return (
-                      <a
-                        key={key}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group/link flex items-center gap-2.5 rounded-xl border border-white/20 bg-linear-to-r from-white/15 to-white/10 px-5 py-2.5 text-sm font-semibold text-white/90 transition-all hover:border-white/40 hover:from-white/20 hover:to-white/15 hover:shadow-lg hover:scale-105"
-                      >
-                        <ExternalLink
-                          size={14}
-                          className="text-white/60 transition-colors group-hover/link:text-white"
-                        />
-                        <span className="truncate max-w-50">
-                          {url.replace(/^https?:\/\/(www\.)?/, "")}
-                        </span>
-                      </a>
-                    );
-                  })}
+                      return (
+                        <a
+                          key={key}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group/link flex items-center gap-2.5 rounded-xl border border-white/20 bg-linear-to-r from-white/15 to-white/10 px-5 py-2.5 text-sm font-semibold text-white/90 transition-all hover:border-white/40 hover:from-white/20 hover:to-white/15 hover:shadow-lg"
+                        >
+                          <ExternalLink
+                            size={14}
+                            className="text-white/60 transition-colors group-hover/link:text-white"
+                          />
+                          <span className="truncate max-w-50">
+                            {url.replace(/^https?:\/\/(www\.)?/, "")}
+                          </span>
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}
