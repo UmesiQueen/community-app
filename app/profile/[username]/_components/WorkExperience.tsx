@@ -7,11 +7,10 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { api } from "~/convex/_generated/api";
-import type { Id } from "~/convex/_generated/dataModel";
 import type { WorkExperience } from "~/types/models";
 
 interface WorkExperienceSectionProps {
-  userId: Id<"users">;
+  userId: string;
 }
 
 const locationLabels: Record<WorkExperience["location"], string> = {

@@ -59,7 +59,7 @@ export const project_schema = v.array(
 );
 
 const work_experience_schema = v.object({
-  userId: v.id("users"),
+  userId: v.string(),
   logo: v.optional(v.string()),
   companyName: v.string(),
   location: v.union(

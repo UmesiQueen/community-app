@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 
 export const create = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.string(),
     logo: v.optional(v.string()),
     companyName: v.string(),
     location: v.union(
@@ -29,12 +29,14 @@ export const create = mutation({
 
 export const getByUserId = query({
   args: {
-    userId: v.id("users"),
+    userId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const userId = args.userId;
+    if (!userId) return [];
     return await ctx.db
       .query("workExperience")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .order("desc")
       .collect();
   },
