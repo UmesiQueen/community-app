@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { ArrowLeft, FolderOpen, Plus, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -12,7 +12,8 @@ import { ProjectCard } from "~/components/dashboard/projects/edit/project-card";
 import { ProjectCardSkeleton } from "~/components/dashboard/projects/project-card-skeleton";
 import { Button } from "~/components/ui/button";
 import { api } from "~/convex/_generated/api";
-import { useProfile } from "~/hooks/useProfile";
+import type { Id } from "~/convex/_generated/dataModel";
+import { safeArray } from "~/lib/data.helpers";
 import type { Project } from "~/types/models";
 
 const emptyProject = (): Project => ({
@@ -33,9 +34,10 @@ export const timelineDate = z.union([
 export const formSchema = z.object({
   projects: z.array(
     z.object({
+      _id: z.custom<Id<"project">>().optional(),
       title: z
         .string()
-        .min(2, { message: "Title must be at least 2 characters." })
+        .min(1, { message: "Title is required." })
         .max(100, { message: "Title cannot exceed 100 characters." }),
       description: z
         .string()
@@ -79,12 +81,13 @@ export default function EditProjects() {
   const [uploadProgress, setUploadProgress] = React.useState<string | null>(
     null,
   );
-  const { profile, isLoading } = useProfile();
+  const projects = useQuery(api.project.listProject);
+  const isFetching = projects === undefined;
   const router = useRouter();
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const getStorageUrl = useMutation(api.files.getStorageUrl);
-  const updateProject = useMutation(api.profiles.updateProject);
+  const updateProject = useMutation(api.project.updateProject);
 
   const { control, handleSubmit, reset, ...form } = useForm<
     z.infer<typeof formSchema>
@@ -96,15 +99,15 @@ export default function EditProjects() {
   const { isDirty } = form.formState;
 
   React.useEffect(() => {
-    if (profile?.projects) reset({ projects: profile.projects });
-  }, [profile, reset]);
+    if (projects) reset({ projects: safeArray(projects) });
+  }, [projects, reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "projects",
   });
 
-  const hasNoProjects = profile && fields.length === 0;
+  const hasNoProjects = projects && fields.length === 0;
 
   function cleanProjects(projects: z.infer<typeof formSchema>["projects"]) {
     return projects.map((project) => ({
@@ -183,7 +186,7 @@ export default function EditProjects() {
           </p>
         </div>
 
-        {profile?.projects && profile.projects.length > 0 && (
+        {projects && projects.length > 0 && (
           <Button
             type="button"
             variant="secondary"
@@ -196,7 +199,7 @@ export default function EditProjects() {
         )}
       </div>
 
-      {isLoading ? (
+      {isFetching ? (
         <ProjectCardSkeleton />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">

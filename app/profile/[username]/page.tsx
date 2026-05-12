@@ -312,7 +312,7 @@ export default async function ProfileCard({
           </div>
         )}
 
-        <Projects projects={profile?.projects} />
+        <Projects projects={profile?.project} />
 
         <WorkExperienceSection userId={currentProfile.userId} />
       </div>

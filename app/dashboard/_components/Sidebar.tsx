@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "convex/react";
 import {
   FolderOpenDot,
   Home,
@@ -15,28 +16,24 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { useProfile } from "~/hooks/useProfile";
+import { api } from "~/convex/_generated/api";
 import { authClient } from "~/lib/auth-client";
 import { cn } from "~/lib/utils";
+
+const navigation = [
+  { name: "Home", href: "/dashboard/home", icon: Home },
+  { name: "Profile", href: "/dashboard/profile", icon: User },
+  { name: "Projects", href: "/dashboard/projects", icon: FolderOpenDot },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const { profile } = useProfile();
+  const profile = useQuery(api.profiles.getProfile);
   const { data: session } = authClient.useSession();
-
-  const profileHref = profile?.username
-    ? `/profile/${profile.username}`
-    : "/dashboard/settings/profile";
-
-  const navigation = [
-    { name: "Home", href: "/dashboard/home", icon: Home },
-    { name: "Profile", href: profileHref, icon: User },
-    { name: "Projects", href: "/dashboard/projects", icon: FolderOpenDot },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
-  ];
 
   async function handleSignOut() {
     await authClient.signOut();

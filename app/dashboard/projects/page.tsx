@@ -1,23 +1,25 @@
 "use client";
+import { useQuery } from "convex/react";
 import { Pencil } from "lucide-react";
 import { RedirectType, redirect, useRouter } from "next/navigation";
 import { ProjectCard } from "~/components/dashboard/projects/project-card";
 import { ProjectCardSkeleton } from "~/components/dashboard/projects/project-card-skeleton";
 import { Button } from "~/components/ui/button";
-import { useProfile } from "~/hooks/useProfile";
+import { api } from "~/convex/_generated/api";
 
 export default function Projects() {
-  const { profile, isLoading } = useProfile();
+  const projects = useQuery(api.project.listProject);
+  const isFetching = projects === undefined;
   const router = useRouter();
 
-  if (profile?.projects && profile.projects.length < 1)
+  if (projects && projects.length < 1)
     redirect("/dashboard/projects/edit", RedirectType.replace);
 
   return (
     <div>
       <div className="mb-8 flex justify-between items-center gap-5">
         <h1 className="text-4xl font-semibold">Projects</h1>
-        {!isLoading && (
+        {!isFetching && (
           <Button
             variant={"secondary"}
             size={"sm"}
@@ -28,15 +30,14 @@ export default function Projects() {
         )}
       </div>
 
-      {isLoading ? (
+      {isFetching ? (
         <ProjectCardSkeleton />
       ) : (
-        profile?.projects &&
-        profile.projects.length > 0 && (
+        projects &&
+        projects.length > 0 && (
           <div className="flex flex-col gap-8">
-            {profile.projects.map((project, idx) => {
-              const key = `${project.title}-${idx}`;
-              return <ProjectCard key={key} {...project} />;
+            {projects.map((project) => {
+              return <ProjectCard key={project._id} {...project} />;
             })}
           </div>
         )

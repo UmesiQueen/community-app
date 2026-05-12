@@ -1,3 +1,5 @@
+import type { Id } from "~/convex/_generated/dataModel";
+
 export interface Profile {
   userId?: string;
   firstName: string;
@@ -10,6 +12,7 @@ export interface Profile {
   links: Link[];
   shortBio?: string;
   projects?: Project[];
+  project?: Project[];
   workExperience?: ProfileWorkExperience[];
   interests?: string[];
 }
@@ -34,27 +37,35 @@ export interface Link {
   title: string; // LinkedIn
 }
 
-export interface Project_Link {
+export interface ProjectLink {
   tag: "github" | "live" | "figma" | "behance" | "docs" | "other";
   value: string;
 }
 
-export interface MediaMetadata {
+interface BaseMediaMetadata {
   url: string; // filled after cloud upload
   title?: string; // user-supplied label
   filename: string; // uploaded file name
   mimeType: string; // e.g. "image/png"
   size: number; // bytes
-  duration?: number; // seconds – video only
-  width?: number; // px – image/video
-  height?: number; // px – image/video
   storageId?: string; // Convex storageId after upload
 }
 
-export interface Media {
-  type: "photo" | "pdf" | "video";
-  metadata: MediaMetadata;
-}
+type PhotoMedia = {
+  type: "photo";
+  metadata: BaseMediaMetadata & { width: number; height: number };
+};
+type VideoMedia = {
+  type: "video";
+  metadata: BaseMediaMetadata & {
+    duration: number;
+    width: number;
+    height: number;
+  };
+};
+type PdfMedia = { type: "pdf"; metadata: BaseMediaMetadata };
+
+export type Media = PhotoMedia | PdfMedia | VideoMedia;
 
 export type TimelineDate =
   | null
@@ -62,6 +73,8 @@ export type TimelineDate =
   | { month: string; year: string };
 
 export interface Project {
+  _id?: Id<"project">;
+  userId?: string;
   title: string;
   timeline: {
     start: TimelineDate;
@@ -70,7 +83,7 @@ export interface Project {
   ongoing: boolean;
   description: string;
   media: Media[];
-  link: Project_Link[];
+  link: ProjectLink[];
 }
 
 export interface WorkExperience {

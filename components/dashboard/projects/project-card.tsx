@@ -77,7 +77,7 @@ export function ProjectCard(project: Project) {
             </h4>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {project.media.map((item, idx) => {
-                const key = `${project.title}-media-${idx}`;
+                const key = `${project._id}-media-${idx}`;
                 return (
                   <Link
                     key={key}

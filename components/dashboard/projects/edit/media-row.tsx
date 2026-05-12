@@ -21,14 +21,14 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 
 const ACCEPTED_TYPES: Record<string, "photo" | "video" | "pdf"> = {
   "image/jpeg": "photo",
   "image/png": "photo",
   "image/gif": "photo",
   "image/webp": "photo",
-  "image/svg+xml": "photo",
   "video/mp4": "video",
   "video/webm": "video",
   "video/ogg": "video",
@@ -208,14 +208,21 @@ export default function MediaRow({
     const detectedType = ACCEPTED_TYPES[file.type];
     if (!detectedType) {
       setError(
-        "Unsupported format. Use JPEG, PNG, GIF, WebP, SVG, MP4, WebM, OGG, MOV, or PDF.",
+        "Unsupported format. Use JPEG, PNG, GIF, WebP, MP4, WebM, OGG, MOV, or PDF.",
       );
       return;
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    if (detectedType === "video" && file.size > MAX_VIDEO_SIZE) {
       setError(
-        `File too large. Maximum size is 2 GB (your file: ${formatBytes(file.size)}).`,
+        `Video too large. Maximum size is 50 MB (your video: ${formatBytes(file.size)}).`,
+      );
+      return;
+    }
+
+    if (detectedType !== "video" && file.size > MAX_FILE_SIZE) {
+      setError(
+        `File too large. Maximum size is 10 MB (your file: ${formatBytes(file.size)}).`,
       );
       return;
     }

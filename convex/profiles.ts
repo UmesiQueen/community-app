@@ -1,8 +1,8 @@
 import { queryGeneric as query } from "convex/server";
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
 import { mutation } from "./_generated/server";
 import { authComponent } from "./auth";
-import { project_schema } from "./schema";
 
 export const listProfile = query({
   args: {
@@ -60,7 +60,12 @@ export const getProfileByUsername = query({
     if (!user) return null;
 
     const title = user.title ? await ctx.db.get(user.title) : null;
-    return { ...user, title };
+    const project = user.project
+      ? await Promise.all(
+          user.project.map((projectId: Id<"project">) => ctx.db.get(projectId)),
+        )
+      : [];
+    return { ...user, title, project };
   },
 });
 
@@ -79,8 +84,15 @@ export const getProfile = query({
       if (!user) return null;
 
       const title = user.title ? await ctx.db.get(user.title) : null;
-      return { ...user, title };
-    } catch (_error) {
+      const project = user.project
+        ? await Promise.all(
+            user.project.map((projectId: Id<"project">) =>
+              ctx.db.get(projectId),
+            ),
+          )
+        : [];
+      return { ...user, title, project };
+    } catch {
       // If authentication fails, return null instead of throwing
       return null;
     }
@@ -128,7 +140,7 @@ export const createProfile = mutation({
       title: null,
       shortBio: "",
       links: [],
-      projects: [],
+      project: [],
       workExperience: [],
       interests: [],
     });
@@ -183,26 +195,5 @@ export const updateProfile = mutation({
     });
 
     return profile._id;
-  },
-});
-
-export const updateProject = mutation({
-  args: {
-    projects: project_schema,
-  },
-  handler: async (ctx, args) => {
-    const authUser = await authComponent.getAuthUser(ctx);
-    if (!authUser) throw new Error("Not authenticated");
-
-    const profile = await ctx.db
-      .query("profile")
-      .withIndex("by_email", (q) => q.eq("email", authUser.email)) //TODO: replace with index by_userId, userId should be required in schema.
-      .unique();
-
-    if (!profile) throw new Error("Profile not found");
-
-    await ctx.db.patch(profile._id, {
-      projects: args.projects,
-    });
   },
 });

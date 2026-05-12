@@ -40,17 +40,24 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
 import { Textarea } from "~/components/ui/textarea";
-import type { Media, Project_Link } from "~/types/models";
+import type { Media, ProjectLink } from "~/types/models";
 import LinkRow from "./link-row";
 import MediaRow from "./media-row";
 import TimelineSelect from "./timeline-select";
 
 const emptyMedia = (): Media => ({
   type: "photo",
-  metadata: { url: "", filename: "", mimeType: "", size: 0 },
+  metadata: {
+    url: "",
+    filename: "",
+    mimeType: "",
+    size: 0,
+    width: 0,
+    height: 0,
+  },
 });
 
-const emptyLink = (): Project_Link => ({
+const emptyLink = (): ProjectLink => ({
   tag: "github",
   value: "",
 });
