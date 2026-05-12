@@ -1,6 +1,5 @@
 import { queryGeneric as query } from "convex/server";
 import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
 import { mutation } from "./_generated/server";
 import { authComponent } from "./auth";
 
@@ -60,12 +59,7 @@ export const getProfileByUsername = query({
     if (!user) return null;
 
     const title = user.title ? await ctx.db.get(user.title) : null;
-    const project = user.project
-      ? await Promise.all(
-          user.project.map((projectId: Id<"project">) => ctx.db.get(projectId)),
-        )
-      : [];
-    return { ...user, title, project };
+    return { ...user, title };
   },
 });
 
@@ -84,14 +78,7 @@ export const getProfile = query({
       if (!user) return null;
 
       const title = user.title ? await ctx.db.get(user.title) : null;
-      const project = user.project
-        ? await Promise.all(
-            user.project.map((projectId: Id<"project">) =>
-              ctx.db.get(projectId),
-            ),
-          )
-        : [];
-      return { ...user, title, project };
+      return { ...user, title };
     } catch {
       // If authentication fails, return null instead of throwing
       return null;
@@ -140,7 +127,6 @@ export const createProfile = mutation({
       title: null,
       shortBio: "",
       links: [],
-      project: [],
       workExperience: [],
       interests: [],
     });

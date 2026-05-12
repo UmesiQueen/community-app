@@ -121,7 +121,6 @@ const schema = defineSchema({
     links: v.optional(link_schema),
     shortBio: v.optional(v.nullable(v.string())),
     projects: v.optional(deprecated_projects_schema),
-    project: v.optional(v.array(v.id("project"))),
     workExperience: v.optional(profile_work_experience_schema),
     interests: v.optional(v.array(v.string())),
   })

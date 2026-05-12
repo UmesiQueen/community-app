@@ -12,7 +12,6 @@ export interface Profile {
   links: Link[];
   shortBio?: string;
   projects?: Project[];
-  project?: Project[];
   workExperience?: ProfileWorkExperience[];
   interests?: string[];
 }

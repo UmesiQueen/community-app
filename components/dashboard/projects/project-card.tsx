@@ -50,9 +50,9 @@ const formatTimeline = (project: Project) => {
 export function ProjectCard(project: Project) {
   const timeline = formatTimeline(project);
   return (
-    <Card className="group rounded-3xl bg-blue-500/20 text-blue-300 border border-white/10">
+    <Card className="group rounded-2xl bg-blue-500/20 text-blue-300 border border-white/10">
       <CardHeader>
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <CardTitle className="text-2xl text-white">{project.title}</CardTitle>
           {timeline && (
             <div className="flex items-center gap-2.5 rounded-full border border-amber-400/30 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-2 text-sm font-medium text-amber-200/90 shadow-lg">
@@ -62,9 +62,11 @@ export function ProjectCard(project: Project) {
           )}
         </div>
 
-        <CardDescription className="text-lg text-white/90">
-          {project.description}
-        </CardDescription>
+        {project.description && (
+          <CardDescription className="text-lg text-white/90">
+            {project.description}
+          </CardDescription>
+        )}
       </CardHeader>
 
       <CardContent>
@@ -157,7 +159,7 @@ export function ProjectCard(project: Project) {
 
         {/* Project Links */}
         {project.link && project.link.length > 0 && (
-          <div className="mt-7">
+          <div className="mt-6">
             <h4 className="mb-4 flex items-center gap-2 text-xs font-bold tracking-widest text-white/60 uppercase">
               <div className="h-0.5 w-6 rounded-full bg-white/40" />
               Project Links

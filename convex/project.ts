@@ -17,6 +17,16 @@ export const listProject = query({
   },
 });
 
+export const listProjectByUserId = query({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("project")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .collect();
+  },
+});
+
 export const updateProject = mutation({
   args: {
     projects: v.array(
@@ -29,6 +39,10 @@ export const updateProject = mutation({
   handler: async (ctx, args) => {
     const authUser = await authComponent.getAuthUser(ctx);
     if (!authUser) throw new Error("Not authenticated");
+    for (const project of args.projects) {
+      if (project.userId && project.userId !== authUser._id)
+        throw new Error("Unauthorized action");
+    }
 
     const projectIds: Id<"project">[] = [];
 
@@ -58,16 +72,6 @@ export const updateProject = mutation({
       if (!projectIds.includes(existing._id)) {
         await ctx.db.delete(existing._id);
       }
-    }
-
-    // Update profile with all current project ids
-    const profile = await ctx.db
-      .query("profile")
-      .withIndex("by_userId", (q) => q.eq("userId", authUser._id))
-      .first();
-
-    if (profile) {
-      await ctx.db.patch(profile._id, { project: projectIds });
     }
   },
 });
