@@ -17,6 +17,7 @@ import { safeArray } from "~/lib/data.helpers";
 import type { Project } from "~/types/models";
 
 const emptyProject = (): Project => ({
+  userId: "",
   title: "",
   description: "",
   timeline: { start: null, end: null },
@@ -35,6 +36,7 @@ export const formSchema = z.object({
   projects: z.array(
     z.object({
       _id: z.custom<Id<"project">>().optional(),
+      userId: z.string(),
       title: z
         .string()
         .min(1, { message: "Title is required." })

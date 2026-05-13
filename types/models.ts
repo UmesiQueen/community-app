@@ -73,7 +73,7 @@ export type TimelineDate =
 
 export interface Project {
   _id?: Id<"project">;
-  userId?: string;
+  userId: string;
   title: string;
   timeline: {
     start: TimelineDate;

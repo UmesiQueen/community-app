@@ -55,7 +55,7 @@ const project_link_schema = v.object({
 });
 
 export const project_schema = {
-  userId: v.optional(v.string()),
+  userId: v.string(),
   title: v.string(),
   timeline: v.object({
     start: v.union(
