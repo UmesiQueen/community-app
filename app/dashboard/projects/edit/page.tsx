@@ -89,7 +89,9 @@ export default function EditProjects() {
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const getStorageUrl = useMutation(api.files.getStorageUrl);
+  const createProject = useMutation(api.project.createProject);
   const updateProject = useMutation(api.project.updateProject);
+  const deleteProject = useMutation(api.project.deleteProject);
 
   const { control, handleSubmit, reset, ...form } = useForm<
     z.infer<typeof formSchema>
@@ -167,11 +169,29 @@ export default function EditProjects() {
       const projectsWithUrls = await uploadPendingFiles(data.projects);
       pendingFiles.clear();
       const filteredProjects = cleanProjects(projectsWithUrls);
-      await updateProject({ projects: filteredProjects });
+
+      const submittedIds = new Set(
+        filteredProjects.map((p) => p._id).filter(Boolean) as Id<"project">[],
+      );
+      const removedIds = safeArray(projects)
+        .map((p) => p._id)
+        .filter((id) => !submittedIds.has(id));
+
+      for (const _id of removedIds) await deleteProject({ _id });
+
+      for (const project of filteredProjects) {
+        if (project._id) await updateProject({ project });
+        else await createProject({ project });
+      }
+
       router.push("/dashboard/projects");
     } catch (err) {
       console.error("Save failed:", err);
-      toast.error("Something went wrong while saving. Please try again.");
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong while saving. Please try again.";
+      toast.error(message);
     } finally {
       setIsSaving(false);
       setUploadProgress(null);

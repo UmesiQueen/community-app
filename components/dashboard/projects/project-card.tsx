@@ -95,6 +95,7 @@ export function ProjectCard(project: Project) {
                           src={item.metadata.url}
                           alt={`${project.title} photo`}
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover brightness-90 transition-transform duration-300 group-hover/media:scale-110"
                         />
                       ) : item.type === "video" && item.metadata?.url ? (

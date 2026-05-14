@@ -1,6 +1,5 @@
 import { queryGeneric as query } from "convex/server";
 import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
 import { mutation } from "./_generated/server";
 import { authComponent } from "./auth";
 import { project_schema } from "./schema";
@@ -27,51 +26,58 @@ export const listProjectByUserId = query({
   },
 });
 
-export const updateProject = mutation({
+export const createProject = mutation({
   args: {
-    projects: v.array(
-      v.object({
-        ...project_schema,
-        _id: v.optional(v.id("project")),
-      }),
-    ),
+    project: v.object(project_schema),
   },
   handler: async (ctx, args) => {
     const authUser = await authComponent.getAuthUser(ctx);
     if (!authUser) throw new Error("Not authenticated");
-    for (const project of args.projects) {
-      if (project.userId && project.userId !== authUser._id)
-        throw new Error("Unauthorized action");
-    }
 
-    const projectIds: Id<"project">[] = [];
+    await ctx.db.insert("project", {
+      ...args.project,
+      userId: authUser._id,
+    });
+  },
+});
 
-    for (const project of args.projects) {
-      const { _id, ...projectData } = project;
-      const existingProject = _id ? await ctx.db.get("project", _id) : null;
+export const updateProject = mutation({
+  args: {
+    project: v.object({
+      ...project_schema,
+      _id: v.optional(v.id("project")),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const authUser = await authComponent.getAuthUser(ctx);
+    if (!authUser) throw new Error("Not authenticated");
 
-      if (existingProject) {
-        await ctx.db.patch(existingProject._id, projectData);
-        projectIds.push(existingProject._id);
-      } else {
-        const newProjectId = await ctx.db.insert("project", {
-          ...projectData,
-          userId: authUser._id,
-        });
-        projectIds.push(newProjectId);
-      }
-    }
+    const { _id, ...projectData } = args.project;
 
-    // Delete projects that were removed from the form
-    const existingProjects = await ctx.db
-      .query("project")
-      .withIndex("by_userId", (q) => q.eq("userId", authUser._id))
-      .collect();
+    if (projectData.userId && projectData.userId !== authUser._id)
+      throw new Error("Unauthorized action");
 
-    for (const existing of existingProjects) {
-      if (!projectIds.includes(existing._id)) {
-        await ctx.db.delete(existing._id);
-      }
-    }
+    const existingProject = _id ? await ctx.db.get(_id) : null;
+    if (!existingProject) throw new Error("Project not found");
+
+    await ctx.db.patch(existingProject._id, projectData);
+  },
+});
+
+export const deleteProject = mutation({
+  args: {
+    _id: v.id("project"),
+  },
+  handler: async (ctx, args) => {
+    const authUser = await authComponent.getAuthUser(ctx);
+    if (!authUser) throw new Error("Not authenticated");
+
+    const existingProject = await ctx.db.get(args._id);
+    if (!existingProject) return;
+
+    if (existingProject.userId !== authUser._id)
+      throw new Error("Unauthorized action");
+
+    await ctx.db.delete(existingProject._id);
   },
 });
