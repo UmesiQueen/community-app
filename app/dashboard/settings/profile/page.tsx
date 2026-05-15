@@ -660,7 +660,7 @@ export function ProfileForm({
                 workFields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
+                    className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-4"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-sm font-semibold text-white">
