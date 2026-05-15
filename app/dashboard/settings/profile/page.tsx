@@ -228,7 +228,8 @@ export function ProfileForm({
   );
 
   function addLink(tag: LinkTag) {
-    const type = LINK_TYPES.find((t) => t.tag === tag)!;
+    const type = LINK_TYPES.find((t) => t.tag === tag);
+    if (!type) return;
     appendLink({ tag, title: type.title, value: "" });
   }
 
@@ -238,7 +239,10 @@ export function ProfileForm({
 
     try {
       const normalizedLinks = values.links.map((link) => {
-        const type = LINK_TYPES.find((t) => t.tag === link.tag)!;
+        const type = LINK_TYPES.find((t) => t.tag === link.tag);
+        if (!type) {
+          return link;
+        }
         return {
           ...link,
           value: type.prefix
@@ -528,9 +532,9 @@ export function ProfileForm({
                 >
                   {linkFields.map((field, index) => {
                     const Icon = getLinkIcon(field.tag);
-                    const typeConfig = LINK_TYPES.find(
-                      (t) => t.tag === field.tag,
-                    )!;
+                    const typeConfig =
+                      LINK_TYPES.find((t) => t.tag === field.tag) ??
+                      LINK_TYPES[0];
 
                     return (
                       <Reorder.Item
