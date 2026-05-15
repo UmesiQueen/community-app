@@ -111,18 +111,16 @@ async function generateImage({ username }: { username: string }) {
 
     if (!profile) {
       return new ImageResponse(
-        (
-          <div style={errorContainerStyle}>
-            <div style={whiteCardStyle}>
-              <h1 style={errorTitleStyle}>Profile Not Found</h1>
-              <p style={errorTextStyle}>@{username}</p>
-            </div>
-            <div style={footerStyle}>
-              <span>Wigxel</span>
-              <span>Community</span>
-            </div>
+        <div style={errorContainerStyle}>
+          <div style={whiteCardStyle}>
+            <h1 style={errorTitleStyle}>Profile Not Found</h1>
+            <p style={errorTextStyle}>@{username}</p>
           </div>
-        ),
+          <div style={footerStyle}>
+            <span>Wigxel</span>
+            <span>Community</span>
+          </div>
+        </div>,
         { width: 1200, height: 630 },
       );
     }
@@ -145,18 +143,16 @@ async function generateImage({ username }: { username: string }) {
     console.error("OG Image generation failed:", error);
 
     return new ImageResponse(
-      (
-        <div style={errorContainerStyle}>
-          <div style={whiteCardStyle}>
-            <h1 style={errorTitleStyle}>Wigxel Community</h1>
-            <p style={errorTextStyle}>Profile unavailable</p>
-          </div>
-          <div style={footerStyle}>
-            <span>Wigxel</span>
-            <span>Community</span>
-          </div>
+      <div style={errorContainerStyle}>
+        <div style={whiteCardStyle}>
+          <h1 style={errorTitleStyle}>Wigxel Community</h1>
+          <p style={errorTextStyle}>Profile unavailable</p>
         </div>
-      ),
+        <div style={footerStyle}>
+          <span>Wigxel</span>
+          <span>Community</span>
+        </div>
+      </div>,
       { width: 1200, height: 630 },
     );
   }
