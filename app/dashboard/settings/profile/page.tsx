@@ -2,7 +2,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
 import { Globe, Link, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Reorder, useDragControls } from "motion/react";
+import { useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
@@ -210,12 +211,16 @@ export function ProfileForm({
     fields: linkFields,
     append: appendLink,
     remove: removeLink,
+    move: moveLink,
   } = useFieldArray({
     control: form.control,
     name: "links",
   });
 
+  const dragControls = useDragControls();
+  const dragConstraintsRef = useRef<HTMLDivElement>(null);
   const watchedLinks = form.watch("links") ?? [];
+  const linkFieldIds = linkFields.map((field) => field.id);
 
   const usedTags = watchedLinks.map((f) => f.tag);
   const availableLinkTypes = LINK_TYPES.filter(
@@ -498,67 +503,118 @@ export function ProfileForm({
                 </p>
               )}
 
-              {linkFields.map((field, index) => {
-                const Icon = getLinkIcon(field.tag);
-                const typeConfig = LINK_TYPES.find((t) => t.tag === field.tag)!;
+              <div ref={dragConstraintsRef} className="space-y-4">
+                <Reorder.Group
+                  axis="y"
+                  values={linkFieldIds}
+                  onReorder={(newOrder) => {
+                    const movedId = newOrder.find(
+                      (id, index) => id !== linkFieldIds[index],
+                    );
+                    if (!movedId) return;
 
-                return (
-                  <div key={field.id} className="flex items-start gap-3">
-                    <div className="mt-6.25 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted">
-                      <Icon className="h-4 w-4 text-muted-foreground" />
-                    </div>
+                    const oldIndex = linkFieldIds.indexOf(movedId);
+                    const newIndex = newOrder.indexOf(movedId);
+                    if (
+                      oldIndex !== -1 &&
+                      newIndex !== -1 &&
+                      oldIndex !== newIndex
+                    ) {
+                      moveLink(oldIndex, newIndex);
+                    }
+                  }}
+                  className="space-y-4"
+                  style={{ position: "relative" }}
+                >
+                  {linkFields.map((field, index) => {
+                    const Icon = getLinkIcon(field.tag);
+                    const typeConfig = LINK_TYPES.find(
+                      (t) => t.tag === field.tag,
+                    )!;
 
-                    <FormField
-                      control={form.control}
-                      name={`links.${index}.value`}
-                      render={({ field: inputField }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>{typeConfig.title}</FormLabel>
-                          <FormControl>
-                            {typeConfig.prefix ? (
-                              <div className="flex items-center rounded-md border overflow-hidden focus-within:ring-1 focus-within:ring-ring">
-                                <span className="px-3 py-2 text-sm text-muted-foreground bg-muted border-r shrink-0">
-                                  {typeConfig.prefix}
-                                </span>
-                                <Input
-                                  className="border-0 rounded-none shadow-none focus-visible:ring-0"
-                                  placeholder={typeConfig.placeholder}
-                                  {...inputField}
-                                  onChange={(e) => {
-                                    inputField.onChange(e);
+                    return (
+                      <Reorder.Item
+                        key={field.id}
+                        value={field.id}
+                        drag="y"
+                        dragConstraints={dragConstraintsRef}
+                        dragListener={false}
+                        dragControls={dragControls}
+                        className="cursor-grab"
+                        onPointerDown={(event) => {
+                          const target = event.target as HTMLElement;
+                          if (
+                            target.closest("button, input, textarea, select")
+                          ) {
+                            return;
+                          }
+                          event.preventDefault();
+                          dragControls.start(event);
+                        }}
+                      >
+                        <div key={field.id} className="flex items-start gap-3">
+                          <div className="mt-6.25 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted">
+                            <Icon className="h-4 w-4 text-muted-foreground" />
+                          </div>
 
-                                    form.clearErrors(`links.${index}.value`);
-                                  }}
-                                />
-                              </div>
-                            ) : (
-                              <Input
-                                placeholder={typeConfig.placeholder}
-                                {...inputField}
-                              />
+                          <FormField
+                            control={form.control}
+                            name={`links.${index}.value`}
+                            render={({ field: inputField }) => (
+                              <FormItem className="flex-1">
+                                <FormLabel className="select-none">
+                                  {typeConfig.title}
+                                </FormLabel>
+                                <FormControl>
+                                  {typeConfig.prefix ? (
+                                    <div className="flex items-center rounded-md border overflow-hidden focus-within:ring-1 focus-within:ring-ring">
+                                      <span className="px-3 py-2 text-sm text-muted-foreground bg-muted border-r shrink-0 select-none">
+                                        {typeConfig.prefix}
+                                      </span>
+                                      <Input
+                                        className="border-0 rounded-none shadow-none focus-visible:ring-0"
+                                        placeholder={typeConfig.placeholder}
+                                        {...inputField}
+                                        onChange={(e) => {
+                                          inputField.onChange(e);
+
+                                          form.clearErrors(
+                                            `links.${index}.value`,
+                                          );
+                                        }}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <Input
+                                      placeholder={typeConfig.placeholder}
+                                      {...inputField}
+                                    />
+                                  )}
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
                             )}
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          />
 
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="text-muted-foreground hover:text-destructive mt-6.25"
-                      onClick={() => {
-                        form.clearErrors(`links.${index}`);
-                        removeLink(index);
-                      }}
-                      aria-label={`Remove ${typeConfig.title} link`}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                );
-              })}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground hover:text-destructive mt-6.25"
+                            onClick={() => {
+                              form.clearErrors(`links.${index}`);
+                              removeLink(index);
+                            }}
+                            aria-label={`Remove ${typeConfig.title} link`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </Reorder.Item>
+                    );
+                  })}
+                </Reorder.Group>
+              </div>
             </CardContent>
           </Card>
 

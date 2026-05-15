@@ -188,6 +188,7 @@ export const updateProfile = mutation({
         workExperience: args.workExperience,
       }),
       ...(args.interests !== undefined && { interests: args.interests }),
+      ...(args.links !== undefined && { links: args.links }),
     });
 
     return profile._id;
