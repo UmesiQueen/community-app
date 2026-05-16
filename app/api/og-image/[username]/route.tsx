@@ -94,7 +94,7 @@ export async function GET(
 
   const optimized_image = await pngToWebp(await image.arrayBuffer());
 
-  return new Response(optimized_image, {
+  return new Response(new Uint8Array(optimized_image), {
     status: 200,
     headers: {
       "Content-Type": "image/jpeg",
