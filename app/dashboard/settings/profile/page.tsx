@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
-import { Globe, Link, Plus, Trash2 } from "lucide-react";
+import { Globe, GripVertical, Link, Plus, Trash2 } from "lucide-react";
 import { Reorder, useDragControls } from "motion/react";
 import { useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -67,6 +67,41 @@ const getLinkIcon = (tag: string) => {
 };
 
 const usernameOnlyRegex = /^(?!.*(http|https|www\.|\/)).+$/i;
+
+const normalizeLinkForEdit = (link: {
+  tag: string;
+  title: string;
+  value: string;
+}) => {
+  const normalizedTag = link.tag === "website" ? "portfolio" : link.tag;
+
+  if (normalizedTag === "linkedin") {
+    const match = link.value.match(
+      /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([^/?#]+)/i,
+    );
+    return {
+      ...link,
+      tag: normalizedTag,
+      value: match ? match[1] : link.value,
+    };
+  }
+
+  if (normalizedTag === "github") {
+    const match = link.value.match(
+      /(?:https?:\/\/)?(?:www\.)?github\.com\/([^/?#]+)/i,
+    );
+    return {
+      ...link,
+      tag: normalizedTag,
+      value: match ? match[1] : link.value,
+    };
+  }
+
+  return {
+    ...link,
+    tag: normalizedTag,
+  };
+};
 
 // ─── Schemas ───────────────────────────────────────────────────────────────────
 
@@ -162,7 +197,8 @@ export default function Profile() {
                 isCurrent: exp.endDate === null || exp.endDate === undefined,
               })) || [],
             interests: profile.interests?.join(", ") || "",
-            links: profile.links ?? [],
+            links:
+              profile.links?.map((link) => normalizeLinkForEdit(link)) ?? [],
           }}
         />
       ) : (
@@ -557,6 +593,13 @@ export function ProfileForm({
                         }}
                       >
                         <div key={field.id} className="flex items-start gap-3">
+                          <div
+                            className="mt-6 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted"
+                            title="Drag to reorder"
+                          >
+                            <GripVertical className="h-4 w-4 text-muted-foreground" />
+                          </div>
+
                           <div className="mt-6.25 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted">
                             <Icon className="h-4 w-4 text-muted-foreground" />
                           </div>
