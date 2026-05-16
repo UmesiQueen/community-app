@@ -1,9 +1,11 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
+import { isNullable } from "effect/Predicate";
 import { Globe, Link, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,6 +32,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/convex/_generated/api";
 import type { Id } from "~/convex/_generated/dataModel";
 import { useTitles } from "~/hooks/useTitles";
+import { anomaly } from "~/lib/error.helpers";
 
 // ─── Link types ────────────────────────────────────────────────────────────────
 
@@ -124,7 +127,13 @@ const formSchema = z.object({
   shortBio: z.string().optional(),
   profileImage: z.string().optional(),
   workExperience: z.array(workExperienceSchema).optional(),
-  interests: z.string().optional(), // comma-separated
+  interests: z.string().optional(),
+  location: z
+    .object({
+      city: z.string().min(1, "City is required"),
+      country: z.string().min(1, "Country is required"),
+    })
+    .optional(),
   links: z
     .array(linkSchema)
     .max(3, { message: "You can add at most 3 links." }),
@@ -161,6 +170,7 @@ export default function Profile() {
                 isCurrent: exp.endDate === null || exp.endDate === undefined,
               })) || [],
             interests: profile.interests?.join(", ") || "",
+            location: profile.location || { city: "", country: "Nigeria" },
             links: profile.links ?? [],
           }}
         />
@@ -191,6 +201,7 @@ export function ProfileForm({
     defaultValues: {
       ...initialData,
       workExperience: initialData.workExperience || [],
+      location: initialData.location || { city: "", country: "Nigeria" },
       links: initialData.links || [],
     },
   });
@@ -223,7 +234,9 @@ export function ProfileForm({
   );
 
   function addLink(tag: LinkTag) {
-    const type = LINK_TYPES.find((t) => t.tag === tag)!;
+    const type = LINK_TYPES.find((t) => t.tag === tag);
+    if (isNullable(type)) return toast.error("No link type provided");
+
     appendLink({ tag, title: type.title, value: "" });
   }
 
@@ -233,7 +246,14 @@ export function ProfileForm({
 
     try {
       const normalizedLinks = values.links.map((link) => {
-        const type = LINK_TYPES.find((t) => t.tag === link.tag)!;
+        const type = LINK_TYPES.find((t) => t.tag === link.tag);
+
+        if (!type) {
+          const error = new Error("Link type should always be present");
+          anomaly("type should always be present");
+          throw error;
+        }
+
         return {
           ...link,
           value: type.prefix
@@ -277,6 +297,7 @@ export function ProfileForm({
         profileImage: values.profileImage || null,
         workExperience,
         interests,
+        location: values.location || undefined,
         links: normalizedLinks,
       });
 
@@ -384,6 +405,35 @@ export function ProfileForm({
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="location.city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Port-Harcourt" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="location.country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country</FormLabel>
+                      <FormControl>
+                        <Input {...field} disabled />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -500,7 +550,9 @@ export function ProfileForm({
 
               {linkFields.map((field, index) => {
                 const Icon = getLinkIcon(field.tag);
-                const typeConfig = LINK_TYPES.find((t) => t.tag === field.tag)!;
+                const typeConfig = LINK_TYPES.find((t) => t.tag === field.tag);
+
+                if (isNullable(typeConfig)) return null;
 
                 return (
                   <div key={field.id} className="flex items-start gap-3">
