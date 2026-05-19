@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
 import { Globe, GripVertical, Link, Plus, Trash2 } from "lucide-react";
 import { Reorder, useDragControls } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   type FieldArrayWithId,
   type UseFormReturn,
@@ -36,7 +36,6 @@ import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/convex/_generated/api";
 import type { Id } from "~/convex/_generated/dataModel";
 import { useTitles } from "~/hooks/useTitles";
-import { anomaly } from "~/lib/error.helpers";
 
 // ─── Link types ────────────────────────────────────────────────────────────────
 
@@ -116,11 +115,13 @@ function DraggableLinkItem({
   index,
   form,
   removeLink,
+  constraintsRef,
 }: {
   field: LinkField;
   index: number;
   form: UseFormReturn<z.infer<typeof formSchema>>;
   removeLink: (index: number) => void;
+  constraintsRef: React.RefObject<HTMLDivElement>;
 }) {
   const dragControls = useDragControls();
   const Icon = getLinkIcon(field.tag);
@@ -134,6 +135,7 @@ function DraggableLinkItem({
       drag="y"
       dragListener={false}
       dragControls={dragControls}
+      dragConstraints={constraintsRef}
       className="cursor-grab"
     >
       <div key={field.id} className="flex items-start gap-3">
@@ -355,6 +357,7 @@ export function ProfileForm({
     name: "links",
   });
 
+  const linkConstraintsRef = useRef<HTMLDivElement>(null);
   const watchedLinks = form.watch("links") ?? [];
   const linkFieldIds = linkFields.map((field) => field.id);
 
@@ -673,7 +676,7 @@ export function ProfileForm({
                 </p>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-4" ref={linkConstraintsRef}>
                 <Reorder.Group
                   axis="y"
                   values={linkFieldIds}
@@ -703,6 +706,7 @@ export function ProfileForm({
                       index={index}
                       form={form}
                       removeLink={removeLink}
+                      constraintsRef={linkConstraintsRef}
                     />
                   ))}
                 </Reorder.Group>
