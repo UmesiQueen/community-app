@@ -166,10 +166,11 @@ export function ProjectCard(project: Project) {
               Project Links
             </h4>
             <div className="flex flex-wrap gap-3">
-              {project.link.map(({ tag, value: url }, idx) => {
+              {project.link.map(({ tag, value: url }) => {
                 const Icon = getLinkIcon(tag);
+
                 return (
-                  <div key={`${project.title}-link-${idx}`}>
+                  <div key={project._id}>
                     <Link
                       key={tag}
                       href={url}
