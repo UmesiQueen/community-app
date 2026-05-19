@@ -3,8 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
 import { Globe, GripVertical, Link, Plus, Trash2 } from "lucide-react";
 import { Reorder, useDragControls } from "motion/react";
-import { useRef, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useState } from "react";
+import {
+  type FieldArrayWithId,
+  type UseFormReturn,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import {
@@ -102,6 +107,95 @@ const normalizeLinkForEdit = (link: {
     tag: normalizedTag,
   };
 };
+
+type LinkField = FieldArrayWithId<z.infer<typeof formSchema>, "links", "id">;
+
+function DraggableLinkItem({
+  field,
+  index,
+  form,
+  removeLink,
+}: {
+  field: LinkField;
+  index: number;
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+  removeLink: (index: number) => void;
+}) {
+  const dragControls = useDragControls();
+  const Icon = getLinkIcon(field.tag);
+  const typeConfig =
+    LINK_TYPES.find((t) => t.tag === field.tag) ?? LINK_TYPES[0];
+
+  return (
+    <Reorder.Item
+      key={field.id}
+      value={field.id}
+      drag="y"
+      dragListener={false}
+      dragControls={dragControls}
+      className="cursor-grab"
+    >
+      <div key={field.id} className="flex items-start gap-3">
+        <div
+          className="mt-6 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted"
+          title="Drag to reorder"
+          onPointerDown={(event) => dragControls.start(event)}
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </div>
+
+        <div className="mt-6.25 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted">
+          <Icon className="h-4 w-4 text-muted-foreground" />
+        </div>
+
+        <FormField
+          control={form.control}
+          name={`links.${index}.value`}
+          render={({ field: inputField }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="select-none">{typeConfig.title}</FormLabel>
+              <FormControl>
+                {typeConfig.prefix ? (
+                  <div className="flex items-center rounded-md border overflow-hidden focus-within:ring-1 focus-within:ring-ring">
+                    <span className="px-3 py-2 text-sm text-muted-foreground bg-muted border-r shrink-0 select-none">
+                      {typeConfig.prefix}
+                    </span>
+                    <Input
+                      className="border-0 rounded-none shadow-none focus-visible:ring-0"
+                      placeholder={typeConfig.placeholder}
+                      {...inputField}
+                      onChange={(e) => {
+                        inputField.onChange(e);
+                        form.clearErrors(`links.${index}.value`);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <Input placeholder={typeConfig.placeholder} {...inputField} />
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="text-muted-foreground hover:text-destructive mt-6.25"
+          onClick={() => {
+            form.clearErrors(`links.${index}`);
+            removeLink(index);
+          }}
+          aria-label={`Remove ${typeConfig.title} link`}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </Reorder.Item>
+  );
+}
 
 // ─── Schemas ───────────────────────────────────────────────────────────────────
 
@@ -253,8 +347,6 @@ export function ProfileForm({
     name: "links",
   });
 
-  const dragControls = useDragControls();
-  const dragConstraintsRef = useRef<HTMLDivElement>(null);
   const watchedLinks = form.watch("links") ?? [];
   const linkFieldIds = linkFields.map((field) => field.id);
 
@@ -543,7 +635,7 @@ export function ProfileForm({
                 </p>
               )}
 
-              <div ref={dragConstraintsRef} className="space-y-4">
+              <div className="space-y-4">
                 <Reorder.Group
                   axis="y"
                   values={linkFieldIds}
@@ -566,100 +658,15 @@ export function ProfileForm({
                   className="space-y-4"
                   style={{ position: "relative" }}
                 >
-                  {linkFields.map((field, index) => {
-                    const Icon = getLinkIcon(field.tag);
-                    const typeConfig =
-                      LINK_TYPES.find((t) => t.tag === field.tag) ??
-                      LINK_TYPES[0];
-
-                    return (
-                      <Reorder.Item
-                        key={field.id}
-                        value={field.id}
-                        drag="y"
-                        dragConstraints={dragConstraintsRef}
-                        dragListener={false}
-                        dragControls={dragControls}
-                        className="cursor-grab"
-                        onPointerDown={(event) => {
-                          const target = event.target as HTMLElement;
-                          if (
-                            target.closest("button, input, textarea, select")
-                          ) {
-                            return;
-                          }
-                          event.preventDefault();
-                          dragControls.start(event);
-                        }}
-                      >
-                        <div key={field.id} className="flex items-start gap-3">
-                          <div
-                            className="mt-6 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted"
-                            title="Drag to reorder"
-                          >
-                            <GripVertical className="h-4 w-4 text-muted-foreground" />
-                          </div>
-
-                          <div className="mt-6.25 flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-muted">
-                            <Icon className="h-4 w-4 text-muted-foreground" />
-                          </div>
-
-                          <FormField
-                            control={form.control}
-                            name={`links.${index}.value`}
-                            render={({ field: inputField }) => (
-                              <FormItem className="flex-1">
-                                <FormLabel className="select-none">
-                                  {typeConfig.title}
-                                </FormLabel>
-                                <FormControl>
-                                  {typeConfig.prefix ? (
-                                    <div className="flex items-center rounded-md border overflow-hidden focus-within:ring-1 focus-within:ring-ring">
-                                      <span className="px-3 py-2 text-sm text-muted-foreground bg-muted border-r shrink-0 select-none">
-                                        {typeConfig.prefix}
-                                      </span>
-                                      <Input
-                                        className="border-0 rounded-none shadow-none focus-visible:ring-0"
-                                        placeholder={typeConfig.placeholder}
-                                        {...inputField}
-                                        onChange={(e) => {
-                                          inputField.onChange(e);
-
-                                          form.clearErrors(
-                                            `links.${index}.value`,
-                                          );
-                                        }}
-                                      />
-                                    </div>
-                                  ) : (
-                                    <Input
-                                      placeholder={typeConfig.placeholder}
-                                      {...inputField}
-                                    />
-                                  )}
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="text-muted-foreground hover:text-destructive mt-6.25"
-                            onClick={() => {
-                              form.clearErrors(`links.${index}`);
-                              removeLink(index);
-                            }}
-                            aria-label={`Remove ${typeConfig.title} link`}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </Reorder.Item>
-                    );
-                  })}
+                  {linkFields.map((field, index) => (
+                    <DraggableLinkItem
+                      key={field.id}
+                      field={field}
+                      index={index}
+                      form={form}
+                      removeLink={removeLink}
+                    />
+                  ))}
                 </Reorder.Group>
               </div>
             </CardContent>
