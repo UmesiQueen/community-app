@@ -121,7 +121,7 @@ function DraggableLinkItem({
   index: number;
   form: UseFormReturn<z.infer<typeof formSchema>>;
   removeLink: (index: number) => void;
-  constraintsRef: React.RefObject<HTMLDivElement>;
+  constraintsRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const dragControls = useDragControls();
   const Icon = getLinkIcon(field.tag);
