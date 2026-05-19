@@ -1,21 +1,15 @@
-import { format } from "date-fns";
 import {
+  BookText,
   Briefcase,
-  Calendar,
-  ExternalLink,
-  FileText,
   Globe,
-  ImageIcon,
   Link,
   Mail,
   MapPin,
   Phone,
-  Video,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-
 import { Behance, Figma, GitHub, LinkedIn } from "~/components/icons";
 import ReturnButton from "~/components/profile/return-button";
 import { ShareButton } from "~/components/profile/share-button";
@@ -23,7 +17,6 @@ import { api } from "~/convex/_generated/api";
 import { fetchAuthQuery } from "~/lib/auth-server";
 import { safeArray, safeObj } from "~/lib/data.helpers";
 import type { Profile } from "~/types/models";
-import { EmptyStateContent } from "./_components/empty-state";
 import Projects from "./_components/project";
 import { WorkExperienceSection } from "./_components/WorkExperience";
 
@@ -37,7 +30,7 @@ const getLinkIcon = (tag: string) => {
     figma: Figma,
     behance: Behance,
   };
-  return iconMap[tag.toLowerCase()] || LinkIcon;
+  return iconMap[tag.toLowerCase()] || Link;
 };
 
 export async function generateMetadata({
@@ -120,7 +113,6 @@ export default async function ProfileCard({
       username,
     },
   );
-  const _profile: Profile = safeObj(currentProfile);
 
   if (currentProfile === null) {
     return notFound();
@@ -272,9 +264,11 @@ export default async function ProfileCard({
                   Links
                 </h2>
               </div>
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+
+              <div className="grid grid-cols-1">
                 {profile_links.map((link) => {
                   const Icon = getLinkIcon(link.tag);
+
                   return (
                     <a
                       key={link.tag}
