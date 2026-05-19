@@ -36,14 +36,14 @@ const DashboardPage = () => {
     profile.shortBio,
     profile.profileImage,
     profile.phoneNumbers.length > 0,
-    profile.projects && profile.projects.length > 0,
+    profile?.projects && profile.projects.length > 0,
   ];
   const completedFields = fields.filter(Boolean).length;
   const completionPercentage = Math.round(
     (completedFields / fields.length) * 100,
   );
 
-  const projectCount = profile.projects?.length || 0;
+  const projectCount = profile?.projects?.length || 0;
 
   return (
     <div className="space-y-6">
